@@ -18,15 +18,15 @@ public class InputAkun {
         listAkun = new ArrayList();
     }
     
-    public void insertData(String username, String password){
-        Akun an = new Akun(username, password);
+    public void insertData(String username, String password, String kdAkun, String statusAkun, int index){
+        Akun an = new Akun(username, password, kdAkun, statusAkun, index);
         listAkun.add(an);
     }
     
     public ArrayList<Akun> getAll(){
         return listAkun;
-    }
-
+    } 
+    
     public int getSize(){
         return listAkun.size();
     }
