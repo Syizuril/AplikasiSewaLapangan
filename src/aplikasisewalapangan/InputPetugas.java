@@ -29,6 +29,8 @@ public class InputPetugas extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Input Data Petugas - Admin");
         this.setLocationRelativeTo(null);
+        kdPegawaiTF.setText(null);
+        kdPegawaiTF.setEditable(false);
     }
     
     public InputPetugas(int status, ArrayList<Akun> akun, int index){
@@ -37,6 +39,17 @@ public class InputPetugas extends javax.swing.JFrame {
         this.statusLogin = status;
         this.index = index;
         initData();
+    }
+    
+    public void hapus(){
+        java.util.Date date=new java.util.Date();  
+        daftarDate.setDate(date);
+        kdPegawaiTF.setText("PG00"+String.valueOf(inputAkun.getSize()));
+        namaTF.setText(null);
+        passwordTF.setText(null);
+        password2TF.setText(null);
+        noTelpTF.setText(null);
+        alamatTF.setText(null);
     }
     
     public InputPetugas(int status, ArrayList<Akun> akun, int index, int row){
@@ -57,6 +70,10 @@ public class InputPetugas extends javax.swing.JFrame {
     public void initData(){
         initComponents();
         clear();
+        kdPegawaiTF.setText("PG00"+String.valueOf(inputAkun.getSize()));
+        kdPegawaiTF.setEditable(false);
+        java.util.Date date=new java.util.Date();  
+        daftarDate.setDate(date);
         haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
     }
     
@@ -72,6 +89,7 @@ public class InputPetugas extends javax.swing.JFrame {
         noTelpTF.setText(inputAkun.get(selectedRow+1).getNoTelp());
         alamatTF.setText(inputAkun.get(selectedRow+1).getAlamat());
         edit=1;
+        kdPegawaiTF.setEditable(false);
     }
     
     public final void viewDataTable(){
@@ -132,8 +150,9 @@ public class InputPetugas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         alamatTF = new javax.swing.JTextArea();
         noTelpTF = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        saveBT = new javax.swing.JButton();
+        seeBT = new javax.swing.JButton();
+        signOutLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -277,23 +296,23 @@ public class InputPetugas extends javax.swing.JFrame {
         alamatTF.setRows(5);
         jScrollPane1.setViewportView(alamatTF);
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(0, 102, 153));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save24.png"))); // NOI18N
-        jButton3.setText("SIMPAN");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        saveBT.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        saveBT.setForeground(new java.awt.Color(0, 102, 153));
+        saveBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save24.png"))); // NOI18N
+        saveBT.setText("SIMPAN");
+        saveBT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                saveBTActionPerformed(evt);
             }
         });
 
-        jButton5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(0, 102, 153));
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/see24.png"))); // NOI18N
-        jButton5.setText("LIHAT DATA");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        seeBT.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        seeBT.setForeground(new java.awt.Color(0, 102, 153));
+        seeBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/see24.png"))); // NOI18N
+        seeBT.setText("LIHAT DATA");
+        seeBT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                seeBTActionPerformed(evt);
             }
         });
 
@@ -325,12 +344,12 @@ public class InputPetugas extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(39, 39, 39)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(saveBT, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(seeBT, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(35, 35, 35))
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton3, jButton5});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {saveBT, seeBT});
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {daftarDate, jScrollPane1, kdPegawaiTF, namaTF, noTelpTF, password2TF, passwordTF});
 
@@ -368,11 +387,21 @@ public class InputPetugas extends javax.swing.JFrame {
                             .addComponent(jLabel11)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton3)
+                        .addComponent(saveBT)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)))
+                        .addComponent(seeBT)))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
+
+        signOutLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signOutLabel.setForeground(new java.awt.Color(255, 255, 255));
+        signOutLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        signOutLabel.setText("Sign Out");
+        signOutLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signOutLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -384,7 +413,9 @@ public class InputPetugas extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(haiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(haiLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(signOutLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(haiLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -404,7 +435,10 @@ public class InputPetugas extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(haiLabel)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(haiLabel)
+                        .addGap(2, 2, 2)
+                        .addComponent(signOutLabel))
                     .addComponent(haiLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -447,24 +481,32 @@ public class InputPetugas extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_kdPegawaiTFActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        if(edit==1){
-            inputAkun.deleteData(selectedRow+1);
+    private void saveBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBTActionPerformed
+        if((daftarDate.getDate()==null)||(namaTF.getText().equals("")||(passwordTF.getText().equals("")||(password2TF.getText().equals("")||(noTelpTF.getText().equals("")||(alamatTF.getText().equals(""))))))){
+            JOptionPane.showMessageDialog(this, "Pastikan semua form telah diisi untuk melanjutkan !", "Gagal", JOptionPane.ERROR_MESSAGE);
+        }else if(!passwordTF.getText().equals(password2TF.getText())){
+            JOptionPane.showMessageDialog(this, "Inputan Password dan Konfirmasi Password tidak sesuai !", "Gagal", JOptionPane.ERROR_MESSAGE);
+        }else{
+            if(edit==1){
+                inputAkun.deleteData(selectedRow+1);
+            }
+            inputAkun.insertData( 
+                    namaTF.getText(), 
+                    passwordTF.getText(), 
+                    kdPegawaiTF.getText(),
+                    "1", 
+                    noTelpTF.getText(), 
+                    alamatTF.getText(), 
+                    daftarDate.getDate(), 
+                    inputAkun.getSize()
+            );
+            hapus();
+            JOptionPane.showMessageDialog(this, "Data pegawai berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            viewDataTable();    
         }
-        inputAkun.insertData( 
-                namaTF.getText(), 
-                passwordTF.getText(), 
-                kdPegawaiTF.getText(),
-                "1", 
-                noTelpTF.getText(), 
-                alamatTF.getText(), 
-                daftarDate.getDate(), 
-                inputAkun.getSize()
-        );
-        viewDataTable();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_saveBTActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void seeBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seeBTActionPerformed
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
@@ -472,7 +514,7 @@ public class InputPetugas extends javax.swing.JFrame {
                     viewDataTable();
                 }
             });
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_seeBTActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
         this.setVisible(false);
@@ -483,6 +525,16 @@ public class InputPetugas extends javax.swing.JFrame {
                 }
             });
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void signOutLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signOutLabelMouseClicked
+        this.setVisible(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        Login ln = new Login(inputAkun.getAll(),index);
+                        ln.setVisible(true);
+                    }
+                });
+    }//GEN-LAST:event_signOutLabelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -526,8 +578,6 @@ public class InputPetugas extends javax.swing.JFrame {
     private javax.swing.JLabel eFootsallLabel;
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -550,5 +600,8 @@ public class InputPetugas extends javax.swing.JFrame {
     private javax.swing.JTextField noTelpTF;
     private javax.swing.JPasswordField password2TF;
     private javax.swing.JPasswordField passwordTF;
+    private javax.swing.JButton saveBT;
+    private javax.swing.JButton seeBT;
+    private javax.swing.JLabel signOutLabel;
     // End of variables declaration//GEN-END:variables
 }

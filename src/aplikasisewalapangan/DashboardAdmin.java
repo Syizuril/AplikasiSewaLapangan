@@ -77,6 +77,7 @@ public class DashboardAdmin extends javax.swing.JFrame {
         kelolaPetugas = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
+        signOut = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -287,6 +288,16 @@ public class DashboardAdmin extends javax.swing.JFrame {
             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
+        signOut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signOut.setForeground(new java.awt.Color(255, 255, 255));
+        signOut.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        signOut.setText("Sign Out");
+        signOut.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signOutMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -305,7 +316,9 @@ public class DashboardAdmin extends javax.swing.JFrame {
                                 .addGap(28, 28, 28)
                                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(haiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(haiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(signOut, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addComponent(haiLabel1))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -327,8 +340,12 @@ public class DashboardAdmin extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(haiLabel)
-                    .addComponent(haiLabel1))
+                    .addComponent(haiLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(haiLabel)
+                        .addGap(3, 3, 3)
+                        .addComponent(signOut)
+                        .addGap(9, 9, 9)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(eFootsallLabel)
@@ -378,6 +395,16 @@ public class DashboardAdmin extends javax.swing.JFrame {
             }
         });
     }//GEN-LAST:event_kelolaPetugasMouseClicked
+
+    private void signOutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signOutMouseClicked
+        this.setVisible(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        Login ln = new Login(akun.getAll(),index);
+                        ln.setVisible(true);
+                    }
+                });
+    }//GEN-LAST:event_signOutMouseClicked
 
     /**
      * @param args the command line arguments
@@ -438,5 +465,6 @@ public class DashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jmlhPetugas5;
     private javax.swing.JLabel jmlhPetugasLabel;
     private javax.swing.JLabel kelolaPetugas;
+    private javax.swing.JLabel signOut;
     // End of variables declaration//GEN-END:variables
 }

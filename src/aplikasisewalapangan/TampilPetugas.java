@@ -7,6 +7,7 @@ package aplikasisewalapangan;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
 /**
  *
@@ -71,6 +72,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         hapusBT = new javax.swing.JButton();
         editBT = new javax.swing.JButton();
+        signOutLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -247,6 +249,16 @@ public class TampilPetugas extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        signOutLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signOutLabel.setForeground(new java.awt.Color(255, 255, 255));
+        signOutLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        signOutLabel.setText("Sign Out");
+        signOutLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signOutLabelMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -257,7 +269,9 @@ public class TampilPetugas extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(310, 310, 310)
-                        .addComponent(haiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(haiLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(signOutLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(haiLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -277,8 +291,12 @@ public class TampilPetugas extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(haiLabel)
-                    .addComponent(haiLabel1))
+                    .addComponent(haiLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(haiLabel)
+                        .addGap(1, 1, 1)
+                        .addComponent(signOutLabel)
+                        .addGap(13, 13, 13)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(eFootsallLabel)
@@ -340,21 +358,45 @@ public class TampilPetugas extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void hapusBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBTActionPerformed
-        akun.deleteData(pegawaiTable.getSelectedRow()+1);
-        ip = new InputPetugas(statusLogin,akun.getAll(),index);
-        pegawaiTable.setModel(ip.modelPegawai);
-        ip.viewDataTable();
+        if(pegawaiTable.getSelectedRow()>=0){
+            int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
+            if(reply==JOptionPane.YES_OPTION){
+                akun.deleteData(pegawaiTable.getSelectedRow()+1);
+                ip = new InputPetugas(statusLogin,akun.getAll(),index);
+                pegawaiTable.setModel(ip.modelPegawai);
+                ip.viewDataTable();
+            }else{
+                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            }
+            
+        }else{
+            JOptionPane.showMessageDialog(this, "Silahkan klik baris pada table yang ingin dihapus", "Perhatian !", WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_hapusBTActionPerformed
 
     private void editBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBTActionPerformed
-        this.setVisible(false);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    ip = new InputPetugas(statusLogin,akun.getAll(),index, pegawaiTable.getSelectedRow());
-                    ip.setVisible(true);
-                }
-            });
+        if(pegawaiTable.getSelectedRow()>=0){
+            this.setVisible(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        ip = new InputPetugas(statusLogin,akun.getAll(),index, pegawaiTable.getSelectedRow());
+                        ip.setVisible(true);
+                    }
+                });
+        }else{
+            JOptionPane.showMessageDialog(this, "Silahkan klik baris pada table yang ingin diedit", "Perhatian !", WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_editBTActionPerformed
+
+    private void signOutLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signOutLabelMouseClicked
+        this.setVisible(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        Login ln = new Login(akun.getAll(),index);
+                        ln.setVisible(true);
+                    }
+                });
+    }//GEN-LAST:event_signOutLabelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -412,5 +454,6 @@ public class TampilPetugas extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTable pegawaiTable;
+    private javax.swing.JLabel signOutLabel;
     // End of variables declaration//GEN-END:variables
 }

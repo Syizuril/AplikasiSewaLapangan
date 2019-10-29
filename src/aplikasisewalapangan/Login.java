@@ -6,6 +6,7 @@
 package aplikasisewalapangan;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -27,6 +28,14 @@ public class Login extends javax.swing.JFrame {
         initComponents();
         dataAkun = new InputAkun();
         start();
+    }
+    
+    public Login(ArrayList<Akun> akun, int index){
+        this.dataAkun = new InputAkun();
+        this.dataAkun.setListAkun(akun);
+        this.index = index;
+        initComponents();
+        this.setTitle("Login - eFootsall");
         this.setResizable(false);
         this.setLocationRelativeTo(null);
     }
@@ -36,6 +45,9 @@ public class Login extends javax.swing.JFrame {
         usernameTF.setText(null);
         passwordTF.setText(null);
         usernameTF.requestFocus();
+        this.setTitle("Login - eFootsall");
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
     }
     
     /**
