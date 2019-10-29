@@ -5,6 +5,10 @@
  */
 package aplikasisewalapangan;
 
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 /**
  *
  * @author Syekh Syihabuddin AU
@@ -16,7 +20,21 @@ public class AplikasiSewaLapangan {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        System.out.println("test");
+        try {
+            for(LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Login().setVisible(true);
+            }
+        });
     }
     
 }
