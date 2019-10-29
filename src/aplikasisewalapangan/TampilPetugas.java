@@ -16,7 +16,6 @@ public class TampilPetugas extends javax.swing.JFrame {
     private int statusLogin=0;
     private InputAkun akun;
     private int index=0;
-    InputPetugas ip;
     
     /**
      * Creates new form DashboardAdmin
@@ -69,8 +68,6 @@ public class TampilPetugas extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         pegawaiTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
-        hapusBT = new javax.swing.JButton();
-        editBT = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -197,26 +194,6 @@ public class TampilPetugas extends javax.swing.JFrame {
             }
         });
 
-        hapusBT.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        hapusBT.setForeground(new java.awt.Color(0, 102, 153));
-        hapusBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete24.png"))); // NOI18N
-        hapusBT.setText("HAPUS");
-        hapusBT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hapusBTActionPerformed(evt);
-            }
-        });
-
-        editBT.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        editBT.setForeground(new java.awt.Color(0, 102, 153));
-        editBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit24.png"))); // NOI18N
-        editBT.setText("EDIT");
-        editBT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editBTActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -228,20 +205,13 @@ public class TampilPetugas extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(editBT, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(hapusBT, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(hapusBT)
-                    .addComponent(editBT))
+                .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
                 .addContainerGap())
@@ -322,7 +292,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ip = new InputPetugas(statusLogin,akun.getAll(),index);
+                InputPetugas ip = new InputPetugas(statusLogin,akun.getAll(),index);
                 ip.setVisible(true);
             }
         });
@@ -338,23 +308,6 @@ public class TampilPetugas extends javax.swing.JFrame {
                 }
             });
     }//GEN-LAST:event_jLabel2MouseClicked
-
-    private void hapusBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBTActionPerformed
-        akun.deleteData(pegawaiTable.getSelectedRow()+1);
-        ip = new InputPetugas(statusLogin,akun.getAll(),index);
-        pegawaiTable.setModel(ip.modelPegawai);
-        ip.viewDataTable();
-    }//GEN-LAST:event_hapusBTActionPerformed
-
-    private void editBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBTActionPerformed
-        this.setVisible(false);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    ip = new InputPetugas(statusLogin,akun.getAll(),index, pegawaiTable.getSelectedRow());
-                    ip.setVisible(true);
-                }
-            });
-    }//GEN-LAST:event_editBTActionPerformed
 
     /**
      * @param args the command line arguments
@@ -396,10 +349,8 @@ public class TampilPetugas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel eFootsallLabel;
-    private javax.swing.JButton editBT;
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
-    private javax.swing.JButton hapusBT;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
