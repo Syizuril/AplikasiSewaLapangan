@@ -13,25 +13,36 @@ import javax.swing.JOptionPane;
  * @author Syekh Syihabuddin AU
  */
 public class TampilPetugas extends javax.swing.JFrame {
-    private int statusLogin=1;
-    private ArrayList<Akun> akun;
+    private int statusLogin=0;
+    private InputAkun akun;
+    private int index=0;
     
     /**
      * Creates new form DashboardAdmin
      */
     public TampilPetugas() {
-        this.akun = new ArrayList();
+        akun = new InputAkun();
         initComponents();
+        clear();
+    }
+        
+    public TampilPetugas(int status, ArrayList<Akun> akun, int index){
+        this.akun = new InputAkun();
+        this.akun.setListAkun(akun);
+        this.statusLogin = status;
+        this.index = index;
+        initData();
+    }
+    
+    public void clear(){
+        this.setTitle("Tampil Data Petugas - Admin");
         this.setLocationRelativeTo(null);
     }
     
-    public TampilPetugas(int status, ArrayList<Akun> akun, int index){
-        this.akun = new ArrayList();
-        this.akun = akun;
-        this.statusLogin = status;
+    public void initData(){
         initComponents();
-        this.setTitle("Dashboard - Admin");
-        this.setLocationRelativeTo(null);
+        clear();
+        haiLabel.setText("Hallo, "+akun.get(index).getUsername());
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -95,6 +106,11 @@ public class TampilPetugas extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(0, 102, 153));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Dashboard");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -273,9 +289,25 @@ public class TampilPetugas extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new InputPetugas().setVisible(true);
         this.setVisible(false);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                InputPetugas ip = new InputPetugas(statusLogin,akun.getAll(),index);
+                ip.setVisible(true);
+            }
+        });
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        // TODO add your handling code here:this.setVisible(false);
+        this.setVisible(false);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    DashboardAdmin da = new DashboardAdmin(statusLogin,akun.getAll(),index);
+                    da.setVisible(true);
+                }
+            });
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments

@@ -15,31 +15,36 @@ import javax.swing.table.DefaultTableModel;
  * @author Syekh Syihabuddin AU
  */
 public class InputPetugas extends javax.swing.JFrame {
-    private int statusLogin=1;
-    private ArrayList<Akun> akun;
+    private int statusLogin=0, index=0;
     DefaultTableModel modelPegawai;
     InputAkun inputAkun;
-    TampilPetugas tp = new TampilPetugas();
+    TampilPetugas tp;
     /**
      * Creates new form DashboardAdmin
      */
     public InputPetugas() {
-        this.akun = new ArrayList();
         inputAkun = new InputAkun();
         initComponents();
+    }
+    
+    public InputPetugas(int status, ArrayList<Akun> akun, int index){
+        inputAkun = new InputAkun();
+        inputAkun.setListAkun(akun);
+        this.statusLogin = status;
+        this.index = index;
+        initData();
+    }
+    
+    public void clear(){
+        this.setTitle("Input Data Petugas - Admin");
         this.setLocationRelativeTo(null);
         viewDataTable();
     }
     
-    public InputPetugas(int status, ArrayList<Akun> akun, int index){
-        this.akun = new ArrayList();
-        this.akun = akun;
-        inputAkun = new InputAkun();
-        this.statusLogin = status;
+    public void initData(){
         initComponents();
-        this.setTitle("Dashboard - Admin");
-        this.setLocationRelativeTo(null);
-        viewDataTable();
+        clear();
+        haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
     }
     
     public final void viewDataTable(){
@@ -47,17 +52,21 @@ public class InputPetugas extends javax.swing.JFrame {
         Object[][]objectPegawai = new Object[inputAkun.getAll().size()][5];
         int i = 0;
         for(Akun an: inputAkun.getAll()){
-            String arrayPegawai[]={
-                an.getKdAkun(),
-                String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
-                an.getUsername(),
-                an.getNoTelp(),
-                an.getAlamat()
-            };
-            objectPegawai[i]=arrayPegawai;
+            if(an.getStatusAkun().equals("1")){
+                String arrayPegawai[]={
+                    an.getKdAkun(),
+                    String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
+                    an.getUsername(),
+                    an.getNoTelp(),
+                    an.getAlamat()
+                };
+                objectPegawai[i]=arrayPegawai;
+            }
             i++;
         }
         modelPegawai = new DefaultTableModel(objectPegawai,namakolom);
+        tp = new TampilPetugas(statusLogin, inputAkun.getAll(), index);
+        modelPegawai.removeRow(0);
         tp.pegawaiTable.setModel(modelPegawai);
     }
     /**
@@ -138,6 +147,11 @@ public class InputPetugas extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(0, 102, 153));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Dashboard");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -444,10 +458,24 @@ public class InputPetugas extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        tp.setVisible(true);
         this.setVisible(false);
-        viewDataTable();
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    tp.setVisible(true);
+                    viewDataTable();
+                }
+            });
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        this.setVisible(false);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    DashboardAdmin da = new DashboardAdmin(1,inputAkun.getAll(),index);
+                    da.setVisible(true);
+                }
+            });
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments

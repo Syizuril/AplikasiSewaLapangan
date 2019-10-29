@@ -14,26 +14,36 @@ import javax.swing.JOptionPane;
  */
 public class DashboardAdmin extends javax.swing.JFrame {
     private int statusLogin=0;
-    private ArrayList<Akun> akun;
+    private InputAkun akun;
+    private int index=0;
     
     /**
      * Creates new form DashboardAdmin
      */
     public DashboardAdmin() {
-        this.akun = new ArrayList();
+        akun = new InputAkun();
         initComponents();
-        this.setLocationRelativeTo(null);
+        clear();
     }
     
     public DashboardAdmin(int status, ArrayList<Akun> akun, int index){
-        this.akun = new ArrayList();
-        this.akun = akun;
+        this.akun = new InputAkun();
+        this.akun.setListAkun(akun);
         this.statusLogin = status;
-        initComponents();
+        this.index = index;
+        initData();
+    }
+    
+    public void clear(){
         this.setTitle("Dashboard - Admin");
         this.setLocationRelativeTo(null);
+    }
+    
+    public void initData(){
+        initComponents();
+        clear();
         haiLabel.setText("Hallo, "+akun.get(index).getUsername());
-        jmlhPetugasLabel.setText(String.valueOf(akun.size()-1));
+        jmlhPetugasLabel.setText(String.valueOf(akun.getSize()-1));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,7 +74,7 @@ public class DashboardAdmin extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        kelolaPetugas = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
 
@@ -233,11 +243,16 @@ public class DashboardAdmin extends javax.swing.JFrame {
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 102, 153));
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Kelola Petugas");
+        kelolaPetugas.setBackground(new java.awt.Color(255, 255, 255));
+        kelolaPetugas.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        kelolaPetugas.setForeground(new java.awt.Color(0, 102, 153));
+        kelolaPetugas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        kelolaPetugas.setText("Kelola Petugas");
+        kelolaPetugas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                kelolaPetugasMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -245,12 +260,12 @@ public class DashboardAdmin extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addComponent(kelolaPetugas, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+            .addComponent(kelolaPetugas, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -354,6 +369,16 @@ public class DashboardAdmin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowOpened
 
+    private void kelolaPetugasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_kelolaPetugasMouseClicked
+        this.setVisible(false);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                InputPetugas ip = new InputPetugas(statusLogin,akun.getAll(),index);
+                ip.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_kelolaPetugasMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -398,7 +423,6 @@ public class DashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -413,5 +437,6 @@ public class DashboardAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jmlhPetugas3;
     private javax.swing.JLabel jmlhPetugas5;
     private javax.swing.JLabel jmlhPetugasLabel;
+    private javax.swing.JLabel kelolaPetugas;
     // End of variables declaration//GEN-END:variables
 }

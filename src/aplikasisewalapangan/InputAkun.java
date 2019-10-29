@@ -23,6 +23,10 @@ public class InputAkun {
         Akun an = new Akun(username, password, kdAkun, statusAkun, noTelp, alamat, daftar, index);
         listAkun.add(an);
     }
+
+    public void setListAkun(ArrayList<Akun> listAkun) {
+        this.listAkun = listAkun;
+    }
     
     public ArrayList<Akun> getAll(){
         return listAkun;
@@ -34,5 +38,9 @@ public class InputAkun {
     
     public Akun get(int i){
         return listAkun.get(i);
+    }
+    
+    public void deleteData(int index){
+        listAkun.remove(index);
     }
 }
