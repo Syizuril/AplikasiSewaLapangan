@@ -6,6 +6,7 @@
 package aplikasisewalapangan;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -18,8 +19,8 @@ public class InputAkun {
         listAkun = new ArrayList();
     }
     
-    public void insertData(String username, String password, String kdAkun, String statusAkun, int index){
-        Akun an = new Akun(username, password, kdAkun, statusAkun, index);
+    public void insertData(String username, String password, String kdAkun, String statusAkun, String noTelp, String alamat, Date daftar, int index){
+        Akun an = new Akun(username, password, kdAkun, statusAkun, noTelp, alamat, daftar, index);
         listAkun.add(an);
     }
     

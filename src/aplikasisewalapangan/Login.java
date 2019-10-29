@@ -7,6 +7,7 @@ package aplikasisewalapangan;
 
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 
@@ -31,8 +32,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     public void start(){
-        dataAkun.insertData("admin", "admin","A1","0",0);
-        dataAkun.insertData("Andi", "ngaktahu", "P001", "1",1);
+        dataAkun.insertData("Admin","admin","AD001","0","082218424650","Karawang",new Date(2017,10,22),0);
         usernameTF.setText(null);
         passwordTF.setText(null);
         usernameTF.requestFocus();

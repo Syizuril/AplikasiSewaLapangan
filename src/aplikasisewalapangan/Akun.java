@@ -5,12 +5,15 @@
  */
 package aplikasisewalapangan;
 
+import java.util.Date;
+
 /**
  *
  * @author Syekh Syihabuddin AU
  */
 public class Akun {
-    private String username, password, kdAkun, statusAkun;
+    private String username, password, kdAkun, statusAkun, noTelp, alamat;
+    private Date daftar;
     private int index;
 
     public int getIndex() {
@@ -20,13 +23,40 @@ public class Akun {
     public void setIndex(int index) {
         this.index = index;
     }
-
-    public Akun(String username, String password, String kdAkun, String statusAkun, int index) {
+    
+    public Akun(String username, String password, String kdAkun, String statusAkun, String noTelp, String alamat, Date daftar, int index) {
         this.username = username;
         this.password = password;
         this.kdAkun = kdAkun;
         this.statusAkun = statusAkun;
+        this.noTelp = noTelp;
+        this.alamat = alamat;
+        this.daftar = daftar;
         this.index = index;
+    }
+
+    public String getNoTelp() {
+        return noTelp;
+    }
+
+    public void setNoTelp(String noTelp) {
+        this.noTelp = noTelp;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
+    public Date getDaftar() {
+        return daftar;
+    }
+
+    public void setDaftar(Date daftar) {
+        this.daftar = daftar;
     }
     
     public Akun(){
