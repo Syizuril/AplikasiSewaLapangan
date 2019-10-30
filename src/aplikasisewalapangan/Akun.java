@@ -24,6 +24,11 @@ public class Akun {
         this.index = index;
     }
     
+    public Akun(String kdAkun, String username){
+        this.kdAkun = kdAkun;
+        this.username = username;
+    }
+    
     public Akun(String username, String password, String kdAkun, String statusAkun, String noTelp, String alamat, Date daftar, int index) {
         this.username = username;
         this.password = password;

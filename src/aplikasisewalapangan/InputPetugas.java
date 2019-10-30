@@ -18,6 +18,7 @@ public class InputPetugas extends javax.swing.JFrame {
     private int statusLogin=0, index=0;
     DefaultTableModel modelPegawai;
     InputAkun inputAkun;
+    InputPesan inputPesan;
     TampilPetugas tp;
     private int selectedRow=0;
     private int edit=0;
@@ -26,6 +27,7 @@ public class InputPetugas extends javax.swing.JFrame {
      */
     public InputPetugas() {
         inputAkun = new InputAkun();
+        inputPesan = new InputPesan();
         initComponents();
         this.setTitle("Input Data Petugas - Admin");
         this.setLocationRelativeTo(null);
@@ -33,9 +35,11 @@ public class InputPetugas extends javax.swing.JFrame {
         kdPegawaiTF.setEditable(false);
     }
     
-    public InputPetugas(int status, ArrayList<Akun> akun, int index){
+    public InputPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
         inputAkun = new InputAkun();
         inputAkun.setListAkun(akun);
+        inputPesan = new InputPesan();
+        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.index = index;
         initData();
@@ -52,9 +56,11 @@ public class InputPetugas extends javax.swing.JFrame {
         alamatTF.setText(null);
     }
     
-    public InputPetugas(int status, ArrayList<Akun> akun, int index, int row){
+    public InputPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index, int row){
         inputAkun = new InputAkun();
         inputAkun.setListAkun(akun);
+        inputPesan = new InputPesan();
+        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.index = index;
         this.selectedRow = row;
@@ -110,7 +116,7 @@ public class InputPetugas extends javax.swing.JFrame {
             i++;
         }
         modelPegawai = new DefaultTableModel(objectPegawai,namakolom);
-        tp = new TampilPetugas(statusLogin, inputAkun.getAll(), index);
+        tp = new TampilPetugas(statusLogin, inputAkun.getAll(), inputPesan.getAll(),index);
         modelPegawai.removeRow(0);
         tp.pegawaiTable.setModel(modelPegawai);
     }
@@ -158,6 +164,9 @@ public class InputPetugas extends javax.swing.JFrame {
         setBackground(new java.awt.Color(51, 51, 51));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
@@ -237,6 +246,11 @@ public class InputPetugas extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 102, 153));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Kelola Data Pesanan");
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -520,7 +534,7 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(1,inputAkun.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(1,inputAkun.getAll(),inputPesan.getAll(),index);
                     da.setVisible(true);
                 }
             });
@@ -530,11 +544,30 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(inputAkun.getAll(),index);
+                        Login ln = new Login(inputAkun.getAll(),inputPesan.getAll(),index);
                         ln.setVisible(true);
                     }
                 });
     }//GEN-LAST:event_signOutLabelMouseClicked
+
+    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
+        this.setVisible(false);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    InputPesanan ip = new InputPesanan(statusLogin,inputAkun.getAll(),inputPesan.getAll(),index);
+                    ip.setVisible(true);
+                }
+            });
+    }//GEN-LAST:event_jLabel7MouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin keluar dari Aplikasi ?","Konfirmasi Keluar", JOptionPane.YES_NO_OPTION);
+            if(reply==JOptionPane.YES_OPTION){
+                System.exit(0);
+            }else{
+                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

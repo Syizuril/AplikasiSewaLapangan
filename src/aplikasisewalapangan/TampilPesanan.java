@@ -13,24 +13,23 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  *
  * @author Syekh Syihabuddin AU
  */
-public class TampilPetugas extends javax.swing.JFrame {
+public class TampilPesanan extends javax.swing.JFrame {
     private int statusLogin=0;
     private InputAkun akun;
     private InputPesan pesan;
     private int index=0;
-    InputPetugas ip;
+    InputPesanan ip;
     
     /**
      * Creates new form DashboardAdmin
      */
-    public TampilPetugas() {
+    public TampilPesanan() {
         akun = new InputAkun();
-        pesan = new InputPesan();
         initComponents();
         clear();
     }
         
-    public TampilPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index){
+    public TampilPesanan(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index){
         this.akun = new InputAkun();
         this.akun.setListAkun(akun);
         this.pesan = new InputPesan();
@@ -41,7 +40,7 @@ public class TampilPetugas extends javax.swing.JFrame {
     }
     
     public void clear(){
-        this.setTitle("Tampil Data Petugas - Admin");
+        this.setTitle("Tampil Data Pesanan - Admin");
         this.setLocationRelativeTo(null);
     }
     
@@ -76,7 +75,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        pegawaiTable = new javax.swing.JTable();
+        pesanTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         hapusBT = new javax.swing.JButton();
         editBT = new javax.swing.JButton();
@@ -98,7 +97,7 @@ public class TampilPetugas extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Input Pegawai Baru");
+        jLabel1.setText("Input Pesanan Booking");
 
         haiLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         haiLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -142,11 +141,9 @@ public class TampilPetugas extends javax.swing.JFrame {
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        jPanel6.setBackground(new java.awt.Color(0, 102, 153));
-
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setForeground(new java.awt.Color(0, 102, 153));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Kelola Petugas");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -169,15 +166,12 @@ public class TampilPetugas extends javax.swing.JFrame {
             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
+        jPanel7.setBackground(new java.awt.Color(0, 102, 153));
+
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 102, 153));
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Kelola Data Pesanan");
-        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel7MouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -197,7 +191,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(51, 51, 51))); // NOI18N
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        pegawaiTable.setModel(new javax.swing.table.DefaultTableModel(
+        pesanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -208,7 +202,7 @@ public class TampilPetugas extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(pegawaiTable);
+        jScrollPane2.setViewportView(pesanTable);
 
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButton1.setForeground(new java.awt.Color(0, 102, 153));
@@ -360,7 +354,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+                ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
                 ip.setVisible(true);
             }
         });
@@ -371,19 +365,19 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(statusLogin,akun.getAll(), pesan.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(statusLogin,akun.getAll(),pesan.getAll(),index);
                     da.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void hapusBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBTActionPerformed
-        if(pegawaiTable.getSelectedRow()>=0){
+        if(pesanTable.getSelectedRow()>=0){
             int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
             if(reply==JOptionPane.YES_OPTION){
-                akun.deleteData(pegawaiTable.getSelectedRow()+1);
-                ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
-                pegawaiTable.setModel(ip.modelPegawai);
+                pesan.deleteData(pesanTable.getSelectedRow());
+                ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
+                pesanTable.setModel(ip.modelPesanan);
                 ip.viewDataTable();
             }else{
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -395,11 +389,11 @@ public class TampilPetugas extends javax.swing.JFrame {
     }//GEN-LAST:event_hapusBTActionPerformed
 
     private void editBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBTActionPerformed
-        if(pegawaiTable.getSelectedRow()>=0){
+        if(pesanTable.getSelectedRow()>=0){
             this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index, pegawaiTable.getSelectedRow());
+                        ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index, pesanTable.getSelectedRow());
                         ip.setVisible(true);
                     }
                 });
@@ -417,16 +411,6 @@ public class TampilPetugas extends javax.swing.JFrame {
                     }
                 });
     }//GEN-LAST:event_signOutLabelMouseClicked
-
-    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-        this.setVisible(false);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
-                    ip.setVisible(true);
-                }
-            });
-    }//GEN-LAST:event_jLabel7MouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
         this.setVisible(false);
@@ -464,14 +448,18 @@ public class TampilPetugas extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TampilPetugas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TampilPesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TampilPetugas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TampilPesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TampilPetugas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TampilPesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TampilPetugas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TampilPesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -480,7 +468,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TampilPetugas().setVisible(true);
+                new TampilPesanan().setVisible(true);
             }
         });
     }
@@ -502,7 +490,7 @@ public class TampilPetugas extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane2;
-    public javax.swing.JTable pegawaiTable;
+    public javax.swing.JTable pesanTable;
     private javax.swing.JLabel signOutLabel;
     // End of variables declaration//GEN-END:variables
 }

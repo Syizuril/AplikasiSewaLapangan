@@ -18,8 +18,10 @@ import javax.swing.JOptionPane;
  */
 public class Login extends javax.swing.JFrame {
     InputAkun dataAkun;
+    InputPesan dataPesan;
     private int count = 0;
     private int index;
+    private String status = null;
     private String username;
     /**
      * Creates new form Login
@@ -27,12 +29,15 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         dataAkun = new InputAkun();
+        dataPesan = new InputPesan();
         start();
     }
     
-    public Login(ArrayList<Akun> akun, int index){
+    public Login(ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
         this.dataAkun = new InputAkun();
         this.dataAkun.setListAkun(akun);
+        this.dataPesan = new InputPesan();
+        this.dataPesan.setListPesanan(pesan);
         this.index = index;
         initComponents();
         this.setTitle("Login - eFootsall");
@@ -64,10 +69,14 @@ public class Login extends javax.swing.JFrame {
         usernameTF = new javax.swing.JTextField();
         passwordTF = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setForeground(new java.awt.Color(102, 102, 102));
@@ -106,11 +115,6 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setBackground(new java.awt.Color(51, 51, 51));
-        jComboBox1.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "- Pilih Akun -", "Operator", "Administrator" }));
-        jComboBox1.setToolTipText("Pilih identitas Anda");
-
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logo_putih.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -124,8 +128,7 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(usernameTF)
                     .addComponent(passwordTF)
-                    .addComponent(jComboBox1, 0, 201, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
                 .addContainerGap(65, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -139,11 +142,9 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(usernameTF, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(passwordTF, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,6 +174,7 @@ public class Login extends javax.swing.JFrame {
                     if(Arrays.equals(dataAkun.get(i).getPassword().toCharArray(), passwordTF.getPassword())){
                         flag = 1;
                         index = dataAkun.get(i).getIndex();
+                        status = dataAkun.get(i).getStatusAkun();
                     }else{
                         flag = 2;
                     }
@@ -188,8 +190,13 @@ public class Login extends javax.swing.JFrame {
             this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(1,dataAkun.getAll(),index);
-                    da.setVisible(true);
+                    if(status.equals("0")){
+                        DashboardAdmin da = new DashboardAdmin(1,dataAkun.getAll(),dataPesan.getAll(),index);
+                        da.setVisible(true);
+                    }else{
+                        DashboardPetugas dp = new DashboardPetugas(1, dataAkun.getAll(), dataPesan.getAll(), index);
+                        dp.setVisible(true);
+                    }
                 }
             });
         }else if(flag==2){
@@ -213,6 +220,15 @@ public class Login extends javax.swing.JFrame {
             login();
         }
     }//GEN-LAST:event_passwordTFKeyPressed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin keluar dari Aplikasi ?","Konfirmasi Keluar", JOptionPane.YES_NO_OPTION);
+            if(reply==JOptionPane.YES_OPTION){
+                System.exit(0);
+            }else{
+                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -251,7 +267,6 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
