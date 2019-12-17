@@ -5,6 +5,7 @@
  */
 package aplikasisewalapangan;
 
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,31 +13,37 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Syekh Syihabuddin AU
+ * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class DashboardPetugas extends javax.swing.JFrame {
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
     private int statusLogin=0;
-    private InputAkun akun;
-    private InputPesan pesan;
-    private int index=0;
+//    private InputAkun akun;
+//    private InputPesan pesan;`
+    private String id_account=null;
     
     /**
      * Creates new form DashboardAdmin
      */
     public DashboardPetugas() {
-        akun = new InputAkun();
-        pesan = new InputPesan();
+//        akun = new InputAkun();
+//        pesan = new InputPesan();
         initComponents();
+        DB.config();
+        con = DB.con;
         clear();
     }
     
-    public DashboardPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index){
-        this.akun = new InputAkun();
-        this.akun.setListAkun(akun);
-        this.pesan = new InputPesan();
-        this.pesan.setListPesanan(pesan);
+    public DashboardPetugas(int status, String id_account){
+//        this.akun = new InputAkun();
+//        this.akun.setListAkun(akun);
+//        this.pesan = new InputPesan();
+//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         initData();
     }
     
@@ -48,16 +55,16 @@ public class DashboardPetugas extends javax.swing.JFrame {
     public void initData(){
         initComponents();
         clear();
-        haiLabel.setText("Hallo, "+akun.get(index).getUsername());
-        jmlhPelanggan.setText(String.valueOf(pesan.getSize()));
+        haiLabel.setText("Hallo, "+DB.getUsername(id_account));
+        jmlhPelanggan.setText("0");
         java.util.Date date=new java.util.Date();
-        int jam = 0;
-        for(int i=0;i<pesan.getSize(); i++){
-                if(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pesan.get(i).getTglBooking())).equals(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(date)))){
-                    jam = jam+(pesan.get(i).getLamaWaktu());
-                }
-            }
-        jmlhPesanan.setText(String.valueOf(jam));
+//        int jam = 0;
+//        for(int i=0;i<pesan.getSize(); i++){
+//                if(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pesan.get(i).getTglBooking())).equals(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(date)))){
+//                    jam = jam+(pesan.get(i).getLamaWaktu());
+//                }
+//            }
+        jmlhPesanan.setText("0");
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -333,7 +340,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(akun.getAll(),pesan.getAll(),index);
+                        Login ln = new Login();
                         ln.setVisible(true);
                     }
                 });
@@ -343,8 +350,8 @@ public class DashboardPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    InputPesananPetugas ip = new InputPesananPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
-                    ip.setVisible(true);
+//                    InputPesananPetugas ip = new InputPesananPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+//                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked

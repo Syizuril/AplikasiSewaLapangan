@@ -5,38 +5,44 @@
  */
 package aplikasisewalapangan;
 
+import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
 /**
  *
- * @author Syekh Syihabuddin AU
+ * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class TampilPetugas extends javax.swing.JFrame {
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
+    private String sql=null;
     private int statusLogin=0;
-    private InputAkun akun;
-    private InputPesan pesan;
-    private int index=0;
+//    private InputAkun akun;
+//    private InputPesan pesan;
+    private String id_account=null;
     InputPetugas ip;
     
     /**
      * Creates new form DashboardAdmin
      */
     public TampilPetugas() {
-        akun = new InputAkun();
-        pesan = new InputPesan();
+//        akun = new InputAkun();
+//        pesan = new InputPesan();
         initComponents();
         clear();
     }
         
-    public TampilPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index){
-        this.akun = new InputAkun();
-        this.akun.setListAkun(akun);
-        this.pesan = new InputPesan();
-        this.pesan.setListPesanan(pesan);
+    public TampilPetugas(int status, String id_account){
+//        this.akun = new InputAkun();
+//        this.akun.setListAkun(akun);
+//        this.pesan = new InputPesan();
+//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         initData();
     }
     
@@ -48,11 +54,7 @@ public class TampilPetugas extends javax.swing.JFrame {
     public void initData(){
         initComponents();
         clear();
-        try{
-            haiLabel.setText("Hallo, "+akun.get(index).getUsername());
-        }catch(IndexOutOfBoundsException e){
-            haiLabel.setText("Hallo");
-        }
+        haiLabel.setText("Hallo, "+DB.getUsername(id_account));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -360,7 +362,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+                ip = new InputPetugas(statusLogin,id_account);
                 ip.setVisible(true);
             }
         });
@@ -371,7 +373,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(statusLogin,akun.getAll(), pesan.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(statusLogin,id_account);
                     da.setVisible(true);
                 }
             });
@@ -379,10 +381,21 @@ public class TampilPetugas extends javax.swing.JFrame {
 
     private void hapusBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBTActionPerformed
         if(pegawaiTable.getSelectedRow()>=0){
+            int column = 0;
+            int row = pegawaiTable.getSelectedRow();
+            String id = pegawaiTable.getModel().getValueAt(row, column).toString();
             int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
             if(reply==JOptionPane.YES_OPTION){
-                akun.deleteData(pegawaiTable.getSelectedRow()+1);
-                ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+                try{
+                    con = null;
+                    con = DB.config();
+                    sql = "delete from tb_account where id_account='"+id+"'";
+                    st = con.createStatement();
+                    st.execute(sql);
+                }catch(SQLException e){
+                    System.err.println("Error : "+e);
+                }
+                ip = new InputPetugas(statusLogin,id_account);
                 pegawaiTable.setModel(ip.modelPegawai);
                 ip.viewDataTable();
             }else{
@@ -399,8 +412,8 @@ public class TampilPetugas extends javax.swing.JFrame {
             this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index, pegawaiTable.getSelectedRow());
-                        ip.setVisible(true);
+//                        ip = new InputPetugas(statusLogin, pegawaiTable.getSelectedRow());
+//                        ip.setVisible(true);
                     }
                 });
         }else{
@@ -412,7 +425,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(akun.getAll(),pesan.getAll(),index);
+                        Login ln = new Login();
                         ln.setVisible(true);
                     }
                 });
@@ -422,8 +435,8 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
-                    ip.setVisible(true);
+//                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
+//                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked
@@ -432,7 +445,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputPetugas ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+                InputPetugas ip = new InputPetugas(statusLogin,id_account);
                 ip.setVisible(true);
             }
         });

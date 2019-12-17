@@ -5,6 +5,8 @@
  */
 package aplikasisewalapangan;
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -12,13 +14,19 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Syekh Syihabuddin AU
+ * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class InputPetugas extends javax.swing.JFrame {
-    private int statusLogin=0, index=0;
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
+    String sql;
+    private int statusLogin=0;
+    private String id_account=null;
     DefaultTableModel modelPegawai;
-    InputAkun inputAkun;
-    InputPesan inputPesan;
+//    InputAkun inputAkun;
+//    InputPesan inputPesan;
     TampilPetugas tp;
     private int selectedRow=0;
     private int edit=0;
@@ -26,29 +34,35 @@ public class InputPetugas extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public InputPetugas() {
-        inputAkun = new InputAkun();
-        inputPesan = new InputPesan();
+//        inputAkun = new InputAkun();
+//        inputPesan = new InputPesan();
         initComponents();
+        DB.config();
+        con = DB.con;
         this.setTitle("Input Data Petugas - Admin");
         this.setLocationRelativeTo(null);
         kdPegawaiTF.setText(null);
         kdPegawaiTF.setEditable(false);
     }
     
-    public InputPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
-        inputAkun = new InputAkun();
-        inputAkun.setListAkun(akun);
-        inputPesan = new InputPesan();
-        inputPesan.setListPesanan(pesan);
+    public InputPetugas(int status, String id_account){
+//        inputAkun = new InputAkun();
+//        inputAkun.setListAkun(akun);
+//        inputPesan = new InputPesan();
+//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         initData();
     }
     
     public void hapus(){
         java.util.Date date=new java.util.Date();  
         daftarDate.setDate(date);
-        kdPegawaiTF.setText("PG00"+String.valueOf(inputAkun.getSize()));
+        if(stAccountCB.getSelectedItem()=="Administrator"){            
+            kdPegawaiTF.setText("AD"+String.valueOf(String.format("%03d", DB.getJmlAdmin()+1)));
+        }else{
+            kdPegawaiTF.setText("PG"+String.valueOf(String.format("%03d", DB.getJmlPetugas()+1)));
+        }
         namaTF.setText(null);
         passwordTF.setText(null);
         password2TF.setText(null);
@@ -56,13 +70,13 @@ public class InputPetugas extends javax.swing.JFrame {
         alamatTF.setText(null);
     }
     
-    public InputPetugas(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index, int row){
-        inputAkun = new InputAkun();
-        inputAkun.setListAkun(akun);
-        inputPesan = new InputPesan();
-        inputPesan.setListPesanan(pesan);
+    public InputPetugas(int status, String id_account, int row){
+//        inputAkun = new InputAkun();
+//        inputAkun.setListAkun(akun);
+//        inputPesan = new InputPesan();
+//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         this.selectedRow = row;
         initDataEdit();
     }
@@ -76,49 +90,104 @@ public class InputPetugas extends javax.swing.JFrame {
     public void initData(){
         initComponents();
         clear();
-        kdPegawaiTF.setText("PG00"+String.valueOf(inputAkun.getSize()));
+        if(stAccountCB.getSelectedItem()=="Administrator"){            
+            kdPegawaiTF.setText("AD"+String.valueOf(String.format("%03d", DB.getJmlAdmin()+1)));
+        }else{
+            kdPegawaiTF.setText("PG"+String.valueOf(String.format("%03d", DB.getJmlPetugas()+1)));
+        }
+        haiLabel.setText("Hallo, "+DB.getUsername(id_account));
         kdPegawaiTF.setEditable(false);
         java.util.Date date=new java.util.Date();  
         daftarDate.setDate(date);
-        haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
     }
     
     public void initDataEdit(){
         initComponents();
         clear();
-        haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
-        daftarDate.setDate(inputAkun.get(selectedRow+1).getDaftar());
-        kdPegawaiTF.setText(inputAkun.get(selectedRow+1).getKdAkun());
-        namaTF.setText(inputAkun.get(selectedRow+1).getUsername());
-        passwordTF.setText(inputAkun.get(selectedRow+1).getPassword());
-        password2TF.setText(inputAkun.get(selectedRow+1).getPassword());
-        noTelpTF.setText(inputAkun.get(selectedRow+1).getNoTelp());
-        alamatTF.setText(inputAkun.get(selectedRow+1).getAlamat());
-        edit=1;
-        kdPegawaiTF.setEditable(false);
+        rs = DB.selectAllAccount();
+        try{
+            while(rs.next()){
+                if(id_account.equals(rs.getString("id_account"))){
+                    haiLabel.setText("Hallo, "+rs.getString("username"));
+                    daftarDate.setDate(rs.getDate("create_date"));
+                    kdPegawaiTF.setText(rs.getString("id_account"));
+                    namaTF.setText(rs.getString("username"));
+                    noTelpTF.setText(rs.getString("no_telp"));
+                    alamatTF.setText(rs.getString("alamat"));
+                    edit=1;
+                    kdPegawaiTF.setEditable(false);
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+        }
+    }
+    
+    private void clearTabel(){
+        int row = modelPegawai.getRowCount();
+        for (int i = 0; i < row; i++) {
+          modelPegawai.removeRow(0);
+        }
     }
     
     public final void viewDataTable(){
-        String[] namakolom={"Kode Pegawai","Tanggal Daftar","Nama","No. Telp","Alamat"};
-        Object[][]objectPegawai = new Object[inputAkun.getAll().size()][5];
-        int i = 0;
-        for(Akun an: inputAkun.getAll()){
-            if(an.getStatusAkun().equals("1")){
-                String arrayPegawai[]={
-                    an.getKdAkun(),
-                    String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
-                    an.getUsername(),
-                    an.getNoTelp(),
-                    an.getAlamat()
-                };
-                objectPegawai[i]=arrayPegawai;
+        
+        String[] namakolom={"Kode Pegawai","Tanggal Daftar","Nama","No. Telp","Alamat","Terakhir Login"};
+        modelPegawai = new DefaultTableModel(null, namakolom){
+            Class[]types = new Class[]{
+               java.lang.String.class,
+               java.lang.String.class,
+               java.lang.String.class,
+               java.lang.String.class,
+               java.lang.String.class,
+               java.lang.String.class
+            };
+            public Class getColumnClass (int columnIndex){
+               return types [columnIndex];
             }
-            i++;
+            //agar tabel tidak bisa diedit
+            public boolean isCellEditable(int row, int col){
+            int cola = modelPegawai.getColumnCount();
+            return (col < cola)? false : true;
+            }
+        };
+        try{
+            con = DB.config();
+            clearTabel();
+            sql = " select * from tb_account order by id_account asc";
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+            while (rs.next()){
+                String id_account = rs.getString("id_account");
+                String create_date = String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(rs.getDate("create_date")));
+                String username = rs.getString("username");
+                String no_telp = rs.getString("no_telp");
+                String alamat = rs.getString("alamat");
+                String last_login = String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(rs.getDate("last_login")));
+
+                Object[]data = {id_account, create_date, username, no_telp, alamat, last_login};
+                modelPegawai.addRow(data);
+                tp = new TampilPetugas(statusLogin, id_account);
+                tp.pegawaiTable.setModel(modelPegawai);
+              }
+        } catch(SQLException e){
+          JOptionPane.showMessageDialog(this, "Error :"+e);
         }
-        modelPegawai = new DefaultTableModel(objectPegawai,namakolom);
-        tp = new TampilPetugas(statusLogin, inputAkun.getAll(), inputPesan.getAll(),index);
-        modelPegawai.removeRow(0);
-        tp.pegawaiTable.setModel(modelPegawai);
+//        Object[][]objectPegawai = new Object[inputAkun.getAll().size()][5];
+//        int i = 0;
+//        for(Akun an: inputAkun.getAll()){
+//            if(an.getStatusAkun().equals("1")){
+//                String arrayPegawai[]={
+//                    an.getKdAkun(),
+//                    String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
+//                    an.getUsername(),
+//                    an.getNoTelp(),
+//                    an.getAlamat()
+//                };
+//                objectPegawai[i]=arrayPegawai;
+//            }
+//            i++;
+//        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,6 +227,8 @@ public class InputPetugas extends javax.swing.JFrame {
         noTelpTF = new javax.swing.JTextField();
         saveBT = new javax.swing.JButton();
         seeBT = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        stAccountCB = new javax.swing.JComboBox<>();
         signOutLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -330,32 +401,49 @@ public class InputPetugas extends javax.swing.JFrame {
             }
         });
 
+        jLabel13.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("Status Account                     :");
+
+        stAccountCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrator", "Petugas" }));
+        stAccountCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stAccountCBActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(daftarDate, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(kdPegawaiTF, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(namaTF, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(passwordTF, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(password2TF, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(noTelpTF, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(stAccountCB, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(daftarDate, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(kdPegawaiTF, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(namaTF, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(passwordTF, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(password2TF, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(noTelpTF, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(39, 39, 39)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveBT, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -372,6 +460,11 @@ public class InputPetugas extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(saveBT)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seeBT)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(daftarDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -399,12 +492,12 @@ public class InputPetugas extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(saveBT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(seeBT)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(stAccountCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30))))
         );
 
         signOutLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -502,21 +595,49 @@ public class InputPetugas extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Inputan Password dan Konfirmasi Password tidak sesuai !", "Gagal", JOptionPane.ERROR_MESSAGE);
         }else{
             if(edit==1){
-                inputAkun.deleteData(selectedRow+1);
+                try{
+                    con = DB.config();
+                    sql = "delete from tb_account where id_account='"+id_account+"'";
+                    st = con.createStatement();
+                    st.execute(sql);
+                } catch(SQLException e){
+                  JOptionPane.showMessageDialog(this, "Error :"+e);
+                }
+//                inputAkun.deleteData(selectedRow+1);
             }
-            inputAkun.insertData( 
-                    namaTF.getText(), 
-                    passwordTF.getText(), 
-                    kdPegawaiTF.getText(),
-                    "1", 
-                    noTelpTF.getText(), 
-                    alamatTF.getText(), 
-                    daftarDate.getDate(), 
-                    inputAkun.getSize()
-            );
-            hapus();
-            JOptionPane.showMessageDialog(this, "Data pegawai berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
-            viewDataTable();    
+            String password=HashingUtils.preparePassword(passwordTF.getText(), kdPegawaiTF.getText());
+            int status;
+            if(stAccountCB.getSelectedItem()=="Administrator"){
+                status=0;
+            }else if(stAccountCB.getSelectedItem()=="Pegawai"){
+                status=1;
+            }else{
+                status=1;
+            }
+            java.util.Date utilDate = daftarDate.getDate();
+            java.util.Date dateNow=new java.util.Date();
+            java.sql.Date daftarDate = new java.sql.Date(utilDate.getTime());
+            java.sql.Date dateNowSQL = new java.sql.Date(dateNow.getTime());
+            try{
+                con = null;
+                con = DB.config();
+                sql = "insert into tb_account values('"+kdPegawaiTF.getText()+"','"
+                    +namaTF.getText()+"','"
+                    +password+"','"
+                    +daftarDate+"','"
+                    +noTelpTF.getText()+"','"
+                    +alamatTF.getText()+"','"
+                    +status+"','"
+                    +dateNowSQL+"')";
+                System.out.println(sql);
+                st=con.createStatement();
+                st.execute(sql);
+                hapus();
+                
+                JOptionPane.showMessageDialog(this, "Data pegawai berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(this, "Data akun gagal dimasukkan karena "+e.getMessage()+".", "Gagal", JOptionPane.ERROR_MESSAGE);
+            }   
         }
     }//GEN-LAST:event_saveBTActionPerformed
 
@@ -524,6 +645,7 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
+//                    TampilPetugas tp = new TampilPetugas(1,id_account);
                     tp.setVisible(true);
                     viewDataTable();
                 }
@@ -534,7 +656,7 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(1,inputAkun.getAll(),inputPesan.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(1,id_account);
                     da.setVisible(true);
                 }
             });
@@ -544,7 +666,7 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(inputAkun.getAll(),inputPesan.getAll(),index);
+                        Login ln = new Login();
                         ln.setVisible(true);
                     }
                 });
@@ -554,8 +676,8 @@ public class InputPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    InputPesanan ip = new InputPesanan(statusLogin,inputAkun.getAll(),inputPesan.getAll(),index);
-                    ip.setVisible(true);
+//                    InputPesanan ip = new InputPesanan(statusLogin,inputAkun.getAll(),inputPesan.getAll(),index);
+//                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked
@@ -568,6 +690,14 @@ public class InputPetugas extends javax.swing.JFrame {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             }
     }//GEN-LAST:event_formWindowClosing
+
+    private void stAccountCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stAccountCBActionPerformed
+        if(stAccountCB.getSelectedItem()=="Administrator"){            
+            kdPegawaiTF.setText("AD"+String.valueOf(String.format("%03d", DB.getJmlAdmin()+1)));
+        }else{
+            kdPegawaiTF.setText("PG"+String.valueOf(String.format("%03d", DB.getJmlPetugas()+1)));
+        }
+    }//GEN-LAST:event_stAccountCBActionPerformed
 
     /**
      * @param args the command line arguments
@@ -614,6 +744,7 @@ public class InputPetugas extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -636,5 +767,6 @@ public class InputPetugas extends javax.swing.JFrame {
     private javax.swing.JButton saveBT;
     private javax.swing.JButton seeBT;
     private javax.swing.JLabel signOutLabel;
+    private javax.swing.JComboBox<String> stAccountCB;
     // End of variables declaration//GEN-END:variables
 }

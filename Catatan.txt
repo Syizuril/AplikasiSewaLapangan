@@ -1,0 +1,5 @@
+@author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
+
+Kelas 5A - PBD
+
+Perhatian, aplikasi ini membutuhkan library jCalendar yang sudah disediakan pada folder library/jCalendar.

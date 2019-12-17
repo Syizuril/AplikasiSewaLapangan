@@ -6,6 +6,7 @@
 package aplikasisewalapangan;
 
 import java.awt.event.KeyEvent;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,39 +15,47 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Syekh Syihabuddin AU
+ * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class Login extends javax.swing.JFrame {
-    InputAkun dataAkun;
-    InputPesan dataPesan;
-    private int count = 0;
-    private int index;
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
+//    InputAkun dataAkun;
+//    InputPesan dataPesan;
+    String sql;
+//    private int count = 0;
+    private String id_account;
     private String status = null;
-    private String username;
+//    private String username;
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
-        dataAkun = new InputAkun();
-        dataPesan = new InputPesan();
+//        dataAkun = new InputAkun();
+//        dataPesan = new InputPesan();
         start();
     }
     
-    public Login(ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
-        this.dataAkun = new InputAkun();
-        this.dataAkun.setListAkun(akun);
-        this.dataPesan = new InputPesan();
-        this.dataPesan.setListPesanan(pesan);
-        this.index = index;
-        initComponents();
-        this.setTitle("Login - eFootsall");
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-    }
+//    public Login(ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
+//        this.dataAkun = new InputAkun();
+//        this.dataAkun.setListAkun(akun);
+//        this.dataPesan = new InputPesan();
+//        this.dataPesan.setListPesanan(pesan);
+//        this.index = index;
+//        initComponents();
+//        this.setTitle("Login - eFootsall");
+//        this.setResizable(false);
+//        this.setLocationRelativeTo(null);
+//    }
 
     public void start(){
-        dataAkun.insertData("Admin","admin","AD001","0","082218424650","Karawang",new Date(2017,10,22),0);
+        Koneksi DB = new Koneksi();
+        DB.config();
+        con = DB.con;
+//        dataAkun.insertData("Admin","admin","AD001","0","082218424650","Karawang",new Date(2017,10,22),0);
         usernameTF.setText(null);
         passwordTF.setText(null);
         usernameTF.requestFocus();
@@ -144,7 +153,7 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(passwordTF, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -155,9 +164,7 @@ public class Login extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -168,20 +175,76 @@ public class Login extends javax.swing.JFrame {
         if(usernameTF.getText().isEmpty()||passwordTF.getText().isEmpty()){
             flag=3;
         }else{
-            for(int i=0;i<dataAkun.getSize(); i++){
-                if(Arrays.equals(dataAkun.get(i).getUsername().toCharArray(), usernameTF.getText().toCharArray())){
-                    System.out.println("found the account");
-                    if(Arrays.equals(dataAkun.get(i).getPassword().toCharArray(), passwordTF.getPassword())){
-                        flag = 1;
-                        index = dataAkun.get(i).getIndex();
-                        status = dataAkun.get(i).getStatusAkun();
-                    }else{
-                        flag = 2;
+            rs=DB.selectAllAccount();
+            try{
+                while(rs.next()){
+                    String password=HashingUtils.preparePassword(passwordTF.getText(), rs.getString("id_account"));
+                    if(usernameTF.getText().equals(rs.getString("username"))){
+                        if(password.equals(rs.getString("password"))){
+                            flag = 1;
+                            System.out.println("found the account");
+                            id_account = rs.getString("id_account");
+                            if(rs.getInt("status_account")==0){
+                                status="1";
+                            }else if(rs.getInt("status_account")==1){
+                                status="2";
+                            }
+                            java.util.Date dateNow=new java.util.Date();
+                            java.sql.Date dateNowSQL = new java.sql.Date(dateNow.getTime());
+                            con=DB.config();
+                            sql = "update tb_account set last_login='"+dateNowSQL+"' where id_account='"+id_account+"'";
+                            st=con.createStatement();
+                            st.execute(sql);
+                        }else{
+                            flag = 2;
+                            System.out.println("not found the account");
+                        }
                     }
-                }else{
-                    System.out.println("not found the account");
                 }
+            }catch(SQLException e){
+                System.err.println("Error: "+e.getMessage());
             }
+//            try{
+//                con = null;
+//                con = DB.config();
+//                sql = "select * from tb_account";
+//                st=con.createStatement();
+//                rs=st.executeQuery(sql);
+//                while(rs.next()){
+//                    String password=HashingUtils.preparePassword(passwordTF.getText(), rs.getString("id_account"));
+//                    if(usernameTF.getText().equals(rs.getString("username"))){
+//                        if(password.equals(rs.getString("password"))){
+//                            flag = 1;
+//                            System.out.println("found the account");
+//                            status = "0";
+//                            java.util.Date dateNow=new java.util.Date();
+//                            java.sql.Date dateNowSQL = new java.sql.Date(dateNow.getTime());
+//                            sql = "update tb_account set last_login='";
+//                            st=con.createStatement();
+//                            rs=st.executeQuery(sql);
+//                        }else{
+//                            flag = 2;
+//                            System.out.println("not found the account");
+//                        }
+//                    }
+//                }
+//            }catch(SQLException e){
+//                System.err.println("Error: "+e.getMessage());
+//            } 
+//            for(int i=0;i<dataAkun.getSize(); i++){
+//                if(Arrays.equals(dataAkun.get(i).getUsername().toCharArray(), usernameTF.getText().toCharArray())){
+//                    System.out.println("found the account");
+//                    if(Arrays.equals(dataAkun.get(i).getPassword().toCharArray(), passwordTF.getPassword())){
+//                        flag = 1;
+//                        index = dataAkun.get(i).getIndex();
+//                        status = dataAkun.get(i).getStatusAkun();
+//                    }else{
+//                        flag = 2;
+//                    }
+//                }else{
+//                    System.out.println("not found the account");
+//                }
+//            }
         }
         if(flag==0){
            JOptionPane.showMessageDialog(this, "Akun tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -190,11 +253,11 @@ public class Login extends javax.swing.JFrame {
             this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    if(status.equals("0")){
-                        DashboardAdmin da = new DashboardAdmin(1,dataAkun.getAll(),dataPesan.getAll(),index);
+                    if(status.equals("1")){
+                        DashboardAdmin da = new DashboardAdmin(1,id_account);
                         da.setVisible(true);
-                    }else{
-                        DashboardPetugas dp = new DashboardPetugas(1, dataAkun.getAll(), dataPesan.getAll(), index);
+                    }else if(status.equals("2")){
+                        DashboardPetugas dp = new DashboardPetugas(2, id_account);
                         dp.setVisible(true);
                     }
                 }

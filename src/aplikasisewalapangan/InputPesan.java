@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  *
- * @author Syekh Syihabuddin AU
+ * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class InputPesan {
     ArrayList<Pesanan> listPesan;
