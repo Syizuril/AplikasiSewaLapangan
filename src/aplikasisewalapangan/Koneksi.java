@@ -53,6 +53,34 @@ public class Koneksi {
         } 
     }
     
+    public ResultSet selectAllMember(){
+        try{
+            con = null;
+            con = config();
+            sql = "select * from tb_member";
+            st=con.createStatement();
+            rs=st.executeQuery(sql);
+            return rs;
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+            return null;
+        } 
+    }
+    
+    public ResultSet selectAllPesanan(){
+        try{
+            con = null;
+            con = config();
+            sql = "select * from tb_pesan";
+            st=con.createStatement();
+            rs=st.executeQuery(sql);
+            return rs;
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+            return null;
+        } 
+    }
+    
     public int getJmlAdmin(){
         try{
             con = null;
@@ -74,6 +102,38 @@ public class Koneksi {
             con = null;
             con = config();
             sql = "select count(id_account) from tb_account where status_account='1'";
+            st=con.createStatement();
+            rs=st.executeQuery(sql);
+            if(rs.next()){
+                return rs.getInt(1);
+            }
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+        }
+        return 0;
+    }
+    
+    public int getJmlMember(){
+        try{
+            con = null;
+            con = config();
+            sql = "select count(id_member) from tb_member";
+            st=con.createStatement();
+            rs=st.executeQuery(sql);
+            if(rs.next()){
+                return rs.getInt(1);
+            }
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+        }
+        return 0;
+    }
+    
+    public int getJmlPesanan(){
+        try{
+            con = null;
+            con = config();
+            sql = "select count(id_pesan) from tb_pesan";
             st=con.createStatement();
             rs=st.executeQuery(sql);
             if(rs.next()){

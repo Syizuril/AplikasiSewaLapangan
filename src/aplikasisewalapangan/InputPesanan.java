@@ -5,6 +5,7 @@
  */
 package aplikasisewalapangan;
 
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -15,42 +16,52 @@ import javax.swing.table.DefaultTableModel;
  * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class InputPesanan extends javax.swing.JFrame {
-    private int statusLogin=0, index=0;
+    private int statusLogin=0;
     DefaultTableModel modelPesanan;
-    InputPesan inputPesan;
-    InputAkun inputAkun;
+//    InputPesan inputPesan;
+//    InputAkun inputAkun;
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
+    
     TampilPesanan tp;
     private String waktuAwal,waktuAkhir;
-    private int selectedRow=0;
+    private String id_account;
+    private String id_temp=null;
+    private String sql;
     private int edit=0;
     /**
      * Creates new form DashboardAdmin
      */
     public InputPesanan() {
-        inputPesan = new InputPesan();
-        inputAkun = new InputAkun();
+//        inputPesan = new InputPesan();
+//        inputAkun = new InputAkun();
         initComponents();
+        DB.config();
+        con = DB.con;
         this.setTitle("Input Data Pesanan - Admin");
         this.setLocationRelativeTo(null);
         kodeBookingTF.setText(null);
         kodeBookingTF.setEditable(false);
     }
     
-    public InputPesanan(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pn, int index){
-        inputAkun = new InputAkun();
-        inputAkun.setListAkun(akun);
-        inputPesan = new InputPesan();
-        inputPesan.setListPesanan(pn);
+    public InputPesanan(int status, String id_account){
+//        inputAkun = new InputAkun();
+//        inputAkun.setListAkun(akun);
+//        inputPesan = new InputPesan();
+//        inputPesan.setListPesanan(pn);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         initData();
     }
     
     public void hapus(){
         java.util.Date date=new java.util.Date();  
         tglBookingDate.setDate(date);
-        kodeBookingTF.setText("BF00"+String.valueOf(inputPesan.getSize()+1));
+        kodeBookingTF.setText("BF"+String.valueOf(String.format("%03d", DB.getJmlPesanan()+1)));
         kodeBookingTF.setEditable(false);
+        tidakRB.setSelected(true);
         waktuAwalCB.setSelectedItem("07.00");
         waktuAkhirCB.setSelectedItem("07.00");
         durasiTF.setText(null);
@@ -62,14 +73,14 @@ public class InputPesanan extends javax.swing.JFrame {
         keteranganTF.setText(null);
     }
     
-    public InputPesanan(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pn,int index, int row){
-        inputAkun = new InputAkun();
-        inputAkun.setListAkun(akun);
-        inputPesan = new InputPesan();
-        inputPesan.setListPesanan(pn);
+    public InputPesanan(int status, String id_account, String id_temp){
+//        inputAkun = new InputAkun();
+//        inputAkun.setListAkun(akun);
+//        inputPesan = new InputPesan();
+//        inputPesan.setListPesanan(pn);
         this.statusLogin = status;
-        this.index = index;
-        this.selectedRow = row;
+        this.id_account = id_account;
+        this.id_temp = id_temp;
         initDataEdit();
     }
     
@@ -82,39 +93,53 @@ public class InputPesanan extends javax.swing.JFrame {
     public void initData(){
         initComponents();
         clear();
-        namaPetugasLabel.setText(inputAkun.get(index).getUsername());
+        namaPetugasLabel.setText(DB.getUsername(id_account));
         java.util.Date date=new java.util.Date();
         tglBookingDate.setDate(date);
-        kodeBookingTF.setText("BF00"+String.valueOf(inputPesan.getSize()+1));
+        kodeBookingTF.setText("BF"+String.valueOf(String.format("%03d", DB.getJmlPesanan()+1)));
         kodeBookingTF.setEditable(false);
         durasiTF.setEditable(false);
         hargaTF.setEditable(false);
         sisaTF.setEditable(false);
-        haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
+        haiLabel.setText("Hallo, "+DB.getUsername(id_account));
     }
     
     public void initDataEdit(){
         initComponents();
         clear();
-        tglBookingDate.setDate(inputPesan.get(selectedRow).getTglBooking());
-        kodeBookingTF.setText(inputPesan.get(selectedRow).getKodeBooking());
-        kodeBookingTF.setEditable(false);
-        waktuAwalCB.setSelectedItem("0"+inputPesan.get(selectedRow).getWaktuAwal()+".00");
-        waktuAkhirCB.setSelectedItem("0"+inputPesan.get(selectedRow).getWaktuAkhir()+".00");
-        durasiTF.setText(String.valueOf(inputPesan.get(selectedRow).getLamaWaktu()));
-        namaTimTF.setText(inputPesan.get(selectedRow).getNamaTim());
-        noTelpTF.setText(inputPesan.get(selectedRow).getNoHP()); 
-        hargaTF.setText(String.valueOf(inputPesan.get(selectedRow).getHargaBooking()));
-        tagihanTF.setText(String.valueOf(inputPesan.get(selectedRow).getBayarBooking()));
-        sisaTF.setText(String.valueOf(inputPesan.get(selectedRow).getSisaBooking()));
-        keteranganTF.setText(inputPesan.get(selectedRow).getKetBooking());
-        haiLabel.setText("Hallo, "+inputAkun.get(index).getUsername());
-        namaPetugasLabel.setText(inputAkun.get(index).getUsername());
-        edit=1;
-        kodeBookingTF.setEditable(false);
-        durasiTF.setEditable(false);
-        hargaTF.setEditable(false);
-        sisaTF.setEditable(false);
+        rs = DB.selectAllPesanan();
+        try{
+            while(rs.next()){
+                if(id_temp.equals(rs.getString("id_pesan"))){
+                    if(rs.getString("id_member").isEmpty()){
+                        tidakRB.setSelected(true);
+                    }else{
+                        yaRB.setSelected(true);
+                    }
+                    tglBookingDate.setDate(rs.getDate("tgl_booking"));
+                    kodeBookingTF.setText(rs.getString("id_pesan"));
+                    kodeBookingTF.setEditable(false);
+                    waktuAwalCB.setSelectedItem("0"+rs.getString("waktu_awal")+".00");
+                    waktuAkhirCB.setSelectedItem("0"+rs.getString("waktu_akhir")+".00");
+                    durasiTF.setText(rs.getString("lama_waktu"));
+                    namaTimTF.setText(rs.getString("nama_tim"));
+                    noTelpTF.setText(rs.getString("no_telp")); 
+                    hargaTF.setText(rs.getString("harga_booking"));
+                    tagihanTF.setText(rs.getString("tagihan"));
+                    sisaTF.setText(rs.getString("sisa"));
+                    keteranganTF.setText(rs.getString("ket"));
+                    haiLabel.setText("Hallo, "+DB.getUsername(id_account));
+                    namaPetugasLabel.setText(DB.getUsername(id_account));
+                    edit=1;
+                    kodeBookingTF.setEditable(false);
+                    durasiTF.setEditable(false);
+                    hargaTF.setEditable(false);
+                    sisaTF.setEditable(false);
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error : "+e.getMessage());
+        }
     }
     
     public final void viewDataTable(){
@@ -150,6 +175,7 @@ public class InputPesanan extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        memberBG = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         haiLabel = new javax.swing.JLabel();
@@ -173,7 +199,6 @@ public class InputPesanan extends javax.swing.JFrame {
         saveBT = new javax.swing.JButton();
         seeBT = new javax.swing.JButton();
         namaPetugasLabel = new javax.swing.JLabel();
-        tglBookingDate = new com.toedter.calendar.JDateChooser();
         waktuAwalCB = new javax.swing.JComboBox<>();
         waktuAkhirCB = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
@@ -192,7 +217,15 @@ public class InputPesanan extends javax.swing.JFrame {
         durasiTF = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        tglBookingDate = new com.toedter.calendar.JDateChooser();
+        tidakRB = new javax.swing.JRadioButton();
+        yaRB = new javax.swing.JRadioButton();
+        memberTF = new javax.swing.JTextField();
+        cariTF = new javax.swing.JButton();
         signOutLabel = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel21 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -310,7 +343,7 @@ public class InputPesanan extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Tanggal Booking                  :");
+        jLabel4.setText("Pesanan Member                  :");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
@@ -353,10 +386,6 @@ public class InputPesanan extends javax.swing.JFrame {
         namaPetugasLabel.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         namaPetugasLabel.setForeground(new java.awt.Color(255, 255, 255));
         namaPetugasLabel.setText("Nama Petugas");
-
-        tglBookingDate.setBackground(new java.awt.Color(51, 51, 51));
-        tglBookingDate.setForeground(new java.awt.Color(255, 255, 255));
-        tglBookingDate.setToolTipText("Tekan tombol kalender untuk memproses");
 
         waktuAwalCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "07.00", "08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00" }));
 
@@ -435,12 +464,33 @@ public class InputPesanan extends javax.swing.JFrame {
         jLabel18.setForeground(new java.awt.Color(255, 255, 255));
         jLabel18.setText("15.00 - 24.00 = Rp.90.000");
 
+        jLabel19.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel19.setText("Tanggal Booking                  :");
+
+        tglBookingDate.setBackground(new java.awt.Color(51, 51, 51));
+        tglBookingDate.setForeground(new java.awt.Color(255, 255, 255));
+        tglBookingDate.setToolTipText("Tekan tombol kalender untuk memproses");
+
+        memberBG.add(tidakRB);
+        tidakRB.setText("Tidak");
+        tidakRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tidakRBActionPerformed(evt);
+            }
+        });
+
+        memberBG.add(yaRB);
+        yaRB.setText("Ya");
+
+        cariTF.setText("Cari");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel3)
@@ -463,20 +513,28 @@ public class InputPesanan extends javax.swing.JFrame {
                             .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(waktuAwalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(20, 20, 20)
-                                    .addComponent(jLabel12)
-                                    .addGap(20, 20, 20)
-                                    .addComponent(waktuAkhirCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(kodeBookingTF)
-                                .addComponent(tglBookingDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
-                            .addComponent(durasiTF, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(waktuAwalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(jLabel12)
+                                .addGap(20, 20, 20)
+                                .addComponent(waktuAkhirCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(kodeBookingTF)
+                            .addComponent(jScrollPane2)
+                            .addComponent(tglBookingDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(durasiTF, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(tidakRB)
+                                .addGap(18, 18, 18)
+                                .addComponent(yaRB)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cariTF, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(30, 30, 30)
@@ -489,7 +547,7 @@ public class InputPesanan extends javax.swing.JFrame {
                             .addComponent(jLabel11)
                             .addComponent(seeBT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel18))))
-                .addContainerGap())
+                .addGap(27, 27, 27))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {prosesBT, saveBT, seeBT});
@@ -503,9 +561,16 @@ public class InputPesanan extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(namaPetugasLabel))
-                        .addGap(9, 9, 9)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(yaRB)
+                            .addComponent(tidakRB)
                             .addComponent(jLabel4)
+                            .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cariTF))
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel19)
                             .addComponent(tglBookingDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -570,6 +635,31 @@ public class InputPesanan extends javax.swing.JFrame {
             }
         });
 
+        jLabel21.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(0, 102, 153));
+        jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel21.setText("Kelola Member");
+        jLabel21.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel21MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -590,9 +680,11 @@ public class InputPesanan extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(97, 97, 97)
+                        .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
         );
@@ -612,7 +704,8 @@ public class InputPesanan extends javax.swing.JFrame {
                     .addComponent(eFootsallLabel)
                     .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(38, Short.MAX_VALUE))
@@ -770,6 +863,20 @@ public class InputPesanan extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_formWindowClosing
 
+    private void tidakRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tidakRBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tidakRBActionPerformed
+
+    private void jLabel21MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MouseClicked
+        this.setVisible(false);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                InputMember im = new InputMember(statusLogin,id_account);
+                im.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_jLabel21MouseClicked
+
     public void harga(){
         Pesanan pn = new Pesanan(waktuAwalCB.getSelectedItem().toString(),waktuAkhirCB.getSelectedItem().toString());
         durasiTF.setText(String.valueOf(pn.getLamaWaktu()));
@@ -815,6 +922,7 @@ public class InputPesanan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cariTF;
     private javax.swing.JTextField durasiTF;
     private javax.swing.JLabel eFootsallLabel;
     private javax.swing.JLabel haiLabel;
@@ -830,7 +938,10 @@ public class InputPesanan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -843,9 +954,13 @@ public class InputPesanan extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea keteranganTF;
     private javax.swing.JTextField kodeBookingTF;
+    private javax.swing.ButtonGroup memberBG;
+    private javax.swing.JTextField memberTF;
     private javax.swing.JLabel namaPetugasLabel;
     private javax.swing.JTextField namaTimTF;
     private javax.swing.JTextField noTelpTF;
@@ -856,7 +971,9 @@ public class InputPesanan extends javax.swing.JFrame {
     private javax.swing.JTextField sisaTF;
     private javax.swing.JTextField tagihanTF;
     private com.toedter.calendar.JDateChooser tglBookingDate;
+    private javax.swing.JRadioButton tidakRB;
     private javax.swing.JComboBox<String> waktuAkhirCB;
     private javax.swing.JComboBox<String> waktuAwalCB;
+    private javax.swing.JRadioButton yaRB;
     // End of variables declaration//GEN-END:variables
 }
