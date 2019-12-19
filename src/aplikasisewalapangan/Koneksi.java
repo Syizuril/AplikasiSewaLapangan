@@ -158,4 +158,18 @@ public class Koneksi {
         }
         return null;
     }
+    
+    public String getNameMember(String id_member){
+        rs = selectAllMember();
+        try{
+            while(rs.next()){
+                if(id_member.equals(rs.getString("id_member"))){
+                    return rs.getString("nama");
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+        }
+        return null;
+    }
 }

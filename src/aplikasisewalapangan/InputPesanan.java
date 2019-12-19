@@ -5,10 +5,13 @@
  */
 package aplikasisewalapangan;
 
+import java.awt.Color;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -30,6 +33,7 @@ public class InputPesanan extends javax.swing.JFrame {
     private String id_account;
     private String id_temp=null;
     private String sql;
+    private String id_member;
     private int edit=0;
     /**
      * Creates new form DashboardAdmin
@@ -38,8 +42,6 @@ public class InputPesanan extends javax.swing.JFrame {
 //        inputPesan = new InputPesan();
 //        inputAkun = new InputAkun();
         initComponents();
-        DB.config();
-        con = DB.con;
         this.setTitle("Input Data Pesanan - Admin");
         this.setLocationRelativeTo(null);
         kodeBookingTF.setText(null);
@@ -87,6 +89,8 @@ public class InputPesanan extends javax.swing.JFrame {
     public void clear(){
         this.setTitle("Input Data Pesanan - Admin");
         this.setLocationRelativeTo(null);
+        memberTF.setVisible(false);
+        discountPanel.setVisible(false);
         viewDataTable();
     }
     
@@ -111,17 +115,20 @@ public class InputPesanan extends javax.swing.JFrame {
         try{
             while(rs.next()){
                 if(id_temp.equals(rs.getString("id_pesan"))){
+                    namaPetugasLabel.setText(DB.getUsername(id_account));
                     if(rs.getString("id_member").isEmpty()){
                         tidakRB.setSelected(true);
                     }else{
                         yaRB.setSelected(true);
+                        memberTF.setVisible(true);
+                        memberTF.setText(rs.getString("id_member"));
                     }
                     tglBookingDate.setDate(rs.getDate("tgl_booking"));
                     kodeBookingTF.setText(rs.getString("id_pesan"));
                     kodeBookingTF.setEditable(false);
                     waktuAwalCB.setSelectedItem("0"+rs.getString("waktu_awal")+".00");
                     waktuAkhirCB.setSelectedItem("0"+rs.getString("waktu_akhir")+".00");
-                    durasiTF.setText(rs.getString("lama_waktu"));
+                    durasiTF.setText(rs.getString("lama_booking"));
                     namaTimTF.setText(rs.getString("nama_tim"));
                     noTelpTF.setText(rs.getString("no_telp")); 
                     hargaTF.setText(rs.getString("harga_booking"));
@@ -142,29 +149,87 @@ public class InputPesanan extends javax.swing.JFrame {
         }
     }
     
-    public final void viewDataTable(){
-        String[] namakolom={"Kode Booking","Tanggal Booking","Waktu Mulai","Waktu Berakhir","Nama Tim","No. Telp","Harga","Tagihan","Sisa","Keterangan"};
-        Object[][]objectPesan = new Object[inputPesan.getAll().size()][10];
-        int i = 0;
-        for(Pesanan pn: inputPesan.getAll()){
-            String arrayPesanan[]={
-                pn.getKodeBooking(),
-                String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pn.getTglBooking())),
-                String.valueOf(pn.getWaktuAwal()),
-                String.valueOf(pn.getWaktuAkhir()),
-                pn.getNamaTim(),
-                pn.getNoHP(),
-                String.valueOf(pn.getHargaBooking()),
-                String.valueOf(pn.getBayarBooking()),
-                String.valueOf(pn.getSisaBooking()),
-                pn.getKetBooking()
-            };
-            objectPesan[i]=arrayPesanan;
-            i++;
+    private void clearTabel(){
+        int row = modelPesanan.getRowCount();
+        for (int i = 0; i < row; i++) {
+          modelPesanan.removeRow(0);
         }
-        modelPesanan = new DefaultTableModel(objectPesan,namakolom);
-        tp = new TampilPesanan(statusLogin, inputAkun.getAll(),inputPesan.getAll(),index);
-        tp.pesanTable.setModel(modelPesanan);
+    }
+    
+    public final void viewDataTable(){
+        String[] namakolom={"Kode Booking","Tanggal Booking","Nama Member","Waktu Mulai","Waktu Berakhir","Nama Tim","No. Telp","Harga","Tagihan","Sisa","Keterangan"};
+        modelPesanan = new DefaultTableModel(null, namakolom){
+            Class[]types = new Class[]{
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class,
+                java.lang.String.class
+            };
+            public Class getColumnClass (int columnIndex){
+               return types [columnIndex];
+            }
+            //agar tabel tidak bisa diedit
+            public boolean isCellEditable(int row, int col){
+            int cola = modelPesanan.getColumnCount();
+            return (col < cola)? false : true;
+            }
+        };
+        try{
+            con = null;
+            con = DB.config();
+            clearTabel();
+            sql = "select * from tb_pesan order by id_pesan asc";
+            st = con.createStatement();
+            rs = st.executeQuery(sql);
+            while(rs.next()){
+                String id_pesan = rs.getString("id_pesan");
+                String tgl_booking = String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(rs.getDate("tgl_booking")));
+                String nama_member = DB.getNameMember(rs.getString("id_member"));
+                String waktu_awal = rs.getString("waktu_awal");
+                String waktu_akhir = rs.getString("waktu_akhir");
+                String nama_tim = rs.getString("nama_tim");
+                String no_telp = rs.getString("no_telp");
+                String harga = rs.getString("harga_booking");
+                String tagihan = rs.getString("tagihan");
+                String sisa = rs.getString("sisa");
+                String keterangan = rs.getString("ket");
+                
+                Object[]data = {id_pesan, tgl_booking, nama_member, waktu_awal, waktu_akhir, nama_tim, no_telp, harga, tagihan, sisa, keterangan};
+                modelPesanan.addRow(data);
+                tp = new TampilPesanan(statusLogin, this.id_account);
+                tp.pesanTable.setModel(modelPesanan);
+            }
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(this, "Error :"+e);
+        }
+//        Object[][]objectPesan = new Object[inputPesan.getAll().size()][10];
+//        int i = 0;
+//        for(Pesanan pn: inputPesan.getAll()){
+//            String arrayPesanan[]={
+//                pn.getKodeBooking(),
+//                String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pn.getTglBooking())),
+//                String.valueOf(pn.getWaktuAwal()),
+//                String.valueOf(pn.getWaktuAkhir()),
+//                pn.getNamaTim(),
+//                pn.getNoHP(),
+//                String.valueOf(pn.getHargaBooking()),
+//                String.valueOf(pn.getBayarBooking()),
+//                String.valueOf(pn.getSisaBooking()),
+//                pn.getKetBooking()
+//            };
+//            objectPesan[i]=arrayPesanan;
+//            i++;
+////        }
+//        modelPesanan = new DefaultTableModel(objectPesan,namakolom);
+//        tp = new TampilPesanan(statusLogin, inputAkun.getAll(),inputPesan.getAll(),index);
+//        tp.pesanTable.setModel(modelPesanan);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -222,7 +287,10 @@ public class InputPesanan extends javax.swing.JFrame {
         tidakRB = new javax.swing.JRadioButton();
         yaRB = new javax.swing.JRadioButton();
         memberTF = new javax.swing.JTextField();
-        cariTF = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        discountPanel = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
         signOutLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
@@ -390,21 +458,9 @@ public class InputPesanan extends javax.swing.JFrame {
         waktuAwalCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "07.00", "08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00" }));
 
         waktuAkhirCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "07.00", "08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00" }));
-        waktuAkhirCB.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                waktuAkhirCBMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                waktuAkhirCBMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                waktuAkhirCBMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                waktuAkhirCBMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                waktuAkhirCBMouseReleased(evt);
+        waktuAkhirCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                waktuAkhirCBActionPerformed(evt);
             }
         });
 
@@ -458,21 +514,23 @@ public class InputPesanan extends javax.swing.JFrame {
 
         durasiTF.setToolTipText("Silahkan atur waktu booking Anda untuk menampilkan lama booking.");
 
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("07.00 - 15.00 = Rp.70.000");
+        jLabel11.setText("Ket :");
 
         jLabel18.setForeground(new java.awt.Color(255, 255, 255));
         jLabel18.setText("15.00 - 24.00 = Rp.90.000");
 
         jLabel19.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel19.setText("Tanggal Booking                  :");
+        jLabel19.setText("Tanggal Booking                   :");
 
         tglBookingDate.setBackground(new java.awt.Color(51, 51, 51));
         tglBookingDate.setForeground(new java.awt.Color(255, 255, 255));
         tglBookingDate.setToolTipText("Tekan tombol kalender untuk memproses");
 
         memberBG.add(tidakRB);
+        tidakRB.setForeground(new java.awt.Color(255, 255, 255));
         tidakRB.setText("Tidak");
         tidakRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -481,9 +539,73 @@ public class InputPesanan extends javax.swing.JFrame {
         });
 
         memberBG.add(yaRB);
+        yaRB.setForeground(new java.awt.Color(255, 255, 255));
         yaRB.setText("Ya");
+        yaRB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                yaRBMouseClicked(evt);
+            }
+        });
+        yaRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yaRBActionPerformed(evt);
+            }
+        });
 
-        cariTF.setText("Cari");
+        memberTF.setForeground(new java.awt.Color(153, 153, 153));
+        memberTF.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        memberTF.setText("Ketikkan id atau nama member");
+        memberTF.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                memberTFFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                memberTFFocusLost(evt);
+            }
+        });
+        memberTF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberTFActionPerformed(evt);
+            }
+        });
+        memberTF.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                memberTFKeyReleased(evt);
+            }
+        });
+
+        jLabel20.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel20.setText("07.00 - 15.00 = Rp.70.000");
+
+        discountPanel.setBackground(new java.awt.Color(51, 51, 51));
+
+        jLabel22.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/discount.png"))); // NOI18N
+        jLabel22.setText("Discount 10%");
+
+        jLabel23.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel23.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel23.setText("POTONGAN MEMBER !!");
+
+        javax.swing.GroupLayout discountPanelLayout = new javax.swing.GroupLayout(discountPanel);
+        discountPanel.setLayout(discountPanelLayout);
+        discountPanelLayout.setHorizontalGroup(
+            discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(discountPanelLayout.createSequentialGroup()
+                .addGroup(discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel22)
+                    .addComponent(jLabel23))
+                .addGap(0, 20, Short.MAX_VALUE))
+        );
+        discountPanelLayout.setVerticalGroup(
+            discountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, discountPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel23)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel22)
+                .addGap(31, 31, 31))
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -532,21 +654,20 @@ public class InputPesanan extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(yaRB)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cariTF, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(saveBT, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                            .addComponent(prosesBT, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(saveBT, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                        .addComponent(prosesBT, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(seeBT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
-                            .addComponent(seeBT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel18))))
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel20))
+                        .addGap(26, 26, 26))
+                    .addComponent(discountPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27))
         );
 
@@ -556,46 +677,45 @@ public class InputPesanan extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(namaPetugasLabel))
                         .addGap(6, 6, 6)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(yaRB)
                             .addComponent(tidakRB)
-                            .addComponent(jLabel4)
-                            .addComponent(memberTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cariTF))
+                            .addComponent(jLabel4))
                         .addGap(6, 6, 6)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel19)
                             .addComponent(tglBookingDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel5)
                             .addComponent(kodeBookingTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(waktuAkhirCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabel8)
                             .addComponent(waktuAwalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel12)
+                            .addComponent(waktuAkhirCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel9)
                             .addComponent(durasiTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel10)
                             .addComponent(namaTimTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
-                            .addComponent(noTelpTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(noTelpTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel14)
                             .addComponent(hargaTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -607,19 +727,26 @@ public class InputPesanan extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel18)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15)
-                    .addComponent(tagihanTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel16)
-                    .addComponent(sisaTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(tagihanTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(sisaTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16))
+                        .addGap(15, 15, 15)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(discountPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(38, 38, 38))
         );
 
@@ -744,7 +871,16 @@ public class InputPesanan extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Silahkan tekan proses terlebih dahulu sebelum menyimpan", "Perhatian", JOptionPane.WARNING_MESSAGE);
         }else{
             if(edit==1){
-                inputPesan.deleteData(selectedRow);
+                try{
+                    con = null;
+                    con = DB.config();
+                    sql ="delete from tb_pesan where id_pesan='"+id_temp+"'";
+                    st = con.createStatement();
+                    st.execute(sql);
+                }catch(SQLException e){
+                    JOptionPane.showMessageDialog(this,"Error : "+e.getMessage());
+                }
+//                inputPesan.deleteData(selectedRow);
             }
             waktuAwal = waktuAwalCB.getSelectedItem().toString();
             String[] partAwal = waktuAwal.split("\\.");
@@ -756,25 +892,57 @@ public class InputPesanan extends javax.swing.JFrame {
             String partWaktuAkhir = partAkhir[0];
             System.out.println(partWaktuAkhir);
             
-            inputPesan.InsertData( 
-                    kodeBookingTF.getText(),
-                    namaTimTF.getText(),
-                    noTelpTF.getText(), 
-                    keteranganTF.getText(), 
-                    inputAkun.get(index).getKdAkun(), 
-                    inputAkun.get(index).getUsername(),
-                    Integer.parseInt(partWaktuAwal),
-                    Integer.parseInt(partWaktuAkhir),
-                    Integer.parseInt(durasiTF.getText()), 
-                    Integer.parseInt(hargaTF.getText()),
-                    Integer.parseInt(tagihanTF.getText()), 
-                    Integer.parseInt(sisaTF.getText()), 
-                    tglBookingDate.getDate(),
-                    index
-            );
-            hapus();
-            JOptionPane.showMessageDialog(this, "Data pesanan berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
-            viewDataTable();        
+            if(tidakRB.isSelected()){
+                id_member=null;
+            }else if(yaRB.isSelected()){
+                id_member=memberTF.getText();
+            }
+            
+            java.util.Date utilDate = tglBookingDate.getDate();
+            java.sql.Date bookingDate = new java.sql.Date(utilDate.getTime());;
+            try{
+                con = null;
+                con = DB.config();
+                sql = "insert into tb_pesan values('"+kodeBookingTF.getText()+"','"
+                        +id_member+"','"
+                        +bookingDate+"','"
+                        +partWaktuAwal+"','"
+                        +partWaktuAkhir+"','"
+                        +durasiTF.getText()+"','"
+                        +namaTimTF.getText()+"','"
+                        +noTelpTF.getText()+"','"
+                        +hargaTF.getText()+"','"
+                        +tagihanTF.getText()+"','"
+                        +sisaTF.getText()+"','"
+                        +keteranganTF.getText()+"')";
+                st = con.createStatement();
+                st.execute(sql);
+                hapus();
+                viewDataTable();
+                JOptionPane.showMessageDialog(this, "Data member berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(this, "Data member gagal dimasukkan karena "+e.getMessage()+".", "Gagal", JOptionPane.ERROR_MESSAGE);
+            }
+             
+//            inputPesan.InsertData( 
+//                    kodeBookingTF.getText(),
+//                    namaTimTF.getText(),
+//                    noTelpTF.getText(), 
+//                    keteranganTF.getText(), 
+//                    inputAkun.get(index).getKdAkun(), 
+//                    inputAkun.get(index).getUsername(),
+//                    Integer.parseInt(partWaktuAwal),
+//                    Integer.parseInt(partWaktuAkhir),
+//                    Integer.parseInt(durasiTF.getText()), 
+//                    Integer.parseInt(hargaTF.getText()),
+//                    Integer.parseInt(tagihanTF.getText()), 
+//                    Integer.parseInt(sisaTF.getText()), 
+//                    tglBookingDate.getDate(),
+//                    index
+//            );
+//            hapus();
+//            JOptionPane.showMessageDialog(this, "Data pesanan berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+//            viewDataTable();        
         }
     }//GEN-LAST:event_saveBTActionPerformed
 
@@ -792,7 +960,7 @@ public class InputPesanan extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(1,inputAkun.getAll(),inputPesan.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(statusLogin,id_account);
                     da.setVisible(true);
                 }
             });
@@ -802,7 +970,7 @@ public class InputPesanan extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(inputAkun.getAll(),inputPesan.getAll(),index);
+                        Login ln = new Login();
                         ln.setVisible(true);
                     }
                 });
@@ -815,6 +983,7 @@ public class InputPesanan extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Minimal pembayaran adalah Rp.20.000 untuk DP", "Perhatian", JOptionPane.WARNING_MESSAGE);
         }else{
             Pesanan pn = new Pesanan(waktuAwalCB.getSelectedItem().toString(),waktuAkhirCB.getSelectedItem().toString());
+            memberTF.setText(id_member);
             durasiTF.setText(String.valueOf(pn.getLamaWaktu()));
             hargaTF.setText(String.valueOf(pn.getHargaBooking()));
             pn.setHargaBooking(Integer.parseInt(hargaTF.getText()));
@@ -828,31 +997,11 @@ public class InputPesanan extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputPetugas ip = new InputPetugas(statusLogin,inputAkun.getAll(),inputPesan.getAll(),index);
+                InputPetugas ip = new InputPetugas(statusLogin,id_account);
                 ip.setVisible(true);
             }
         });
     }//GEN-LAST:event_jLabel6MouseClicked
-
-    private void waktuAkhirCBMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_waktuAkhirCBMousePressed
-        harga();
-    }//GEN-LAST:event_waktuAkhirCBMousePressed
-
-    private void waktuAkhirCBMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_waktuAkhirCBMouseReleased
-        harga();
-    }//GEN-LAST:event_waktuAkhirCBMouseReleased
-
-    private void waktuAkhirCBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_waktuAkhirCBMouseClicked
-        harga();
-    }//GEN-LAST:event_waktuAkhirCBMouseClicked
-
-    private void waktuAkhirCBMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_waktuAkhirCBMouseExited
-        harga();
-    }//GEN-LAST:event_waktuAkhirCBMouseExited
-
-    private void waktuAkhirCBMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_waktuAkhirCBMouseEntered
-        harga();
-    }//GEN-LAST:event_waktuAkhirCBMouseEntered
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin keluar dari Aplikasi ?","Konfirmasi Keluar", JOptionPane.YES_NO_OPTION);
@@ -864,7 +1013,11 @@ public class InputPesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void tidakRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tidakRBActionPerformed
-        // TODO add your handling code here:
+        memberTF.setVisible(false);
+        namaTimTF.setText(null);
+        noTelpTF.setText(null);
+        harga();
+        revalidate();
     }//GEN-LAST:event_tidakRBActionPerformed
 
     private void jLabel21MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MouseClicked
@@ -877,10 +1030,70 @@ public class InputPesanan extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_jLabel21MouseClicked
 
+    private void memberTFKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_memberTFKeyReleased
+        rs = DB.selectAllMember();
+        try{
+            while(rs.next()){
+                if((memberTF.getText().equals(rs.getString("id_member")))||(memberTF.getText().equals(rs.getString("nama")))){
+                    this.id_member=rs.getString("id_member");
+                    namaTimTF.setText(rs.getString("nama_tim"));
+                    noTelpTF.setText(rs.getString("no_telp"));
+                    discountPanel.setVisible(true);
+                    harga();
+                }else{
+                    this.id_member=null;
+                    namaTimTF.setText(null);
+                    noTelpTF.setText(null);
+                    discountPanel.setVisible(false);
+                    harga();
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error : "+e.getMessage());
+        }
+        
+    }//GEN-LAST:event_memberTFKeyReleased
+
+    private void yaRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yaRBActionPerformed
+        memberTF.setVisible(true);
+        revalidate();
+    }//GEN-LAST:event_yaRBActionPerformed
+
+    private void yaRBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yaRBMouseClicked
+        
+    }//GEN-LAST:event_yaRBMouseClicked
+
+    private void waktuAkhirCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_waktuAkhirCBActionPerformed
+        harga();
+    }//GEN-LAST:event_waktuAkhirCBActionPerformed
+
+    private void memberTFFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_memberTFFocusGained
+        memberTF.setText(null);
+        memberTF.setForeground(Color.BLACK);
+        memberTF.setHorizontalAlignment(SwingConstants.LEFT);
+    }//GEN-LAST:event_memberTFFocusGained
+
+    private void memberTFFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_memberTFFocusLost
+        memberTF.setText("Ketikkan id atau nama member");
+        memberTF.setForeground(Color.GRAY);
+        memberTF.setHorizontalAlignment(SwingConstants.CENTER);
+    }//GEN-LAST:event_memberTFFocusLost
+
+    private void memberTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberTFActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_memberTFActionPerformed
+
     public void harga(){
         Pesanan pn = new Pesanan(waktuAwalCB.getSelectedItem().toString(),waktuAkhirCB.getSelectedItem().toString());
         durasiTF.setText(String.valueOf(pn.getLamaWaktu()));
-        hargaTF.setText(String.valueOf(pn.getHargaBooking()));
+        if((tidakRB.isSelected())||((!tidakRB.isSelected())&&(!yaRB.isSelected()))){
+            hargaTF.setText(String.valueOf(pn.getHargaBooking()));
+        }else{
+            int hargaAwal=pn.getHargaBooking();
+            double harga=(int)(hargaAwal-(hargaAwal*0.1));
+            DecimalFormat df = new DecimalFormat("###");
+            hargaTF.setText(String.valueOf(df.format(harga)));
+        }
     }
     
     /**
@@ -922,7 +1135,7 @@ public class InputPesanan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cariTF;
+    private javax.swing.JPanel discountPanel;
     private javax.swing.JTextField durasiTF;
     private javax.swing.JLabel eFootsallLabel;
     private javax.swing.JLabel haiLabel;
@@ -942,6 +1155,8 @@ public class InputPesanan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -955,7 +1170,6 @@ public class InputPesanan extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea keteranganTF;
     private javax.swing.JTextField kodeBookingTF;

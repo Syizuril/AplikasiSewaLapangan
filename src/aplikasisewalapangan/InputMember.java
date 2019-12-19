@@ -98,10 +98,11 @@ public class InputMember extends javax.swing.JFrame {
         initComponents();
         clear();
         rs = DB.selectAllMember();
+        System.out.println(id_temp);
         try{
             while (rs.next()){
                 if(id_temp.equals(rs.getString("id_member"))){
-                    haiLabel.setText("Hallo, "+rs.getString("username"));
+                    haiLabel.setText("Hallo, "+DB.getUsername(id_account));
                     daftarDate.setDate(rs.getDate("create_date"));
                     kdMemberTF.setText(rs.getString("id_member"));
                     namaTF.setText(rs.getString("nama"));
@@ -167,7 +168,7 @@ public class InputMember extends javax.swing.JFrame {
 
                 Object[]data = {id_account, nama, no_ktp, nama_time, no_telp, alamat, create_date, last_trans};
                 modelMember.addRow(data);
-                tm = new TampilMember(statusLogin, id_account);
+                tm = new TampilMember(statusLogin, this.id_account);
                 tm.memberTable.setModel(modelMember);
               }
         } catch(SQLException e){
@@ -629,7 +630,7 @@ public class InputMember extends javax.swing.JFrame {
                             st = con.createStatement();
                             st.execute(sql);
                         } catch(SQLException e){
-                          JOptionPane.showMessageDialog(this, "Error :"+e);
+                          JOptionPane.showMessageDialog(this, "Error :"+e.getMessage());
                         }
         //                inputAkun.deleteData(selectedRow+1);
                     }
@@ -704,8 +705,8 @@ public class InputMember extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-//                    InputPesanan ip = new InputPesanan(statusLogin,inputAkun.getAll(),inputPesan.getAll(),index);
-//                    ip.setVisible(true);
+                    InputPesanan ip = new InputPesanan(statusLogin,id_account);
+                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked

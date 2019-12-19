@@ -146,11 +146,12 @@ public class TampilMember extends javax.swing.JFrame {
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        jPanel6.setForeground(new java.awt.Color(0, 102, 153));
+        jPanel6.setBackground(new java.awt.Color(0, 102, 153));
+        jPanel6.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 102, 153));
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Kelola Petugas");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -354,7 +355,7 @@ public class TampilMember extends javax.swing.JFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(52, 52, 52)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -422,7 +423,7 @@ public class TampilMember extends javax.swing.JFrame {
                     st = con.createStatement();
                     st.execute(sql);
                 }catch(SQLException e){
-                    System.err.println("Error : "+e);
+                    System.err.println("Error : "+e.getMessage());
                 }
                 im = new InputMember(statusLogin,id_account);
                 memberTable.setModel(im.modelMember);
@@ -443,7 +444,7 @@ public class TampilMember extends javax.swing.JFrame {
                     public void run() {
                         int column = 0;
                         int row = memberTable.getSelectedRow();
-                        im = new InputMember(3, id_account,memberTable.getModel().getValueAt(row, column).toString());
+                        im = new InputMember(statusLogin, id_account,memberTable.getModel().getValueAt(row, column).toString());
                         im.setVisible(true);
                     }
                 });
@@ -466,8 +467,8 @@ public class TampilMember extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-//                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
-//                    ip.setVisible(true);
+                    InputPesanan ip = new InputPesanan(statusLogin,id_account);
+                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked
@@ -492,7 +493,13 @@ public class TampilMember extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-        // TODO add your handling code here:
+        this.setVisible(false);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    InputMember im = new InputMember(statusLogin,id_account);
+                    im.setVisible(true);
+                }
+            });
     }//GEN-LAST:event_jLabel8MouseClicked
 
     /**

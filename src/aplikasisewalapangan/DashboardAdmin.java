@@ -470,8 +470,8 @@ public class DashboardAdmin extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-//                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
-//                    ip.setVisible(true);
+                    InputPesanan ip = new InputPesanan(statusLogin,id_account);
+                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked

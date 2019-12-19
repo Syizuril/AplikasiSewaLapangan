@@ -245,7 +245,7 @@ public class Pesanan extends Akun{
     }
 
     public int getSisaBooking() {
-        sisaBooking=hargaBooking-bayarBooking;
+        sisaBooking=bayarBooking-hargaBooking;
         return sisaBooking;
     }
 

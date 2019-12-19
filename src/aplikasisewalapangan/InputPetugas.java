@@ -108,7 +108,7 @@ public class InputPetugas extends javax.swing.JFrame {
         try{
             while(rs.next()){
                 if(id_temp.equals(rs.getString("id_account"))){
-                    haiLabel.setText("Hallo, "+rs.getString("username"));
+                    haiLabel.setText("Hallo, "+DB.getUsername(id_account));
                     daftarDate.setDate(rs.getDate("create_date"));
                     kdPegawaiTF.setText(rs.getString("id_account"));
                     namaTF.setText(rs.getString("username"));
@@ -167,7 +167,7 @@ public class InputPetugas extends javax.swing.JFrame {
 
                 Object[]data = {id_account, create_date, username, no_telp, alamat, last_login};
                 modelPegawai.addRow(data);
-                tp = new TampilPetugas(statusLogin, id_account);
+                tp = new TampilPetugas(statusLogin, this.id_account);
                 tp.pegawaiTable.setModel(modelPegawai);
               }
         } catch(SQLException e){
@@ -633,7 +633,7 @@ public class InputPetugas extends javax.swing.JFrame {
                 st=con.createStatement();
                 st.execute(sql);
                 hapus();
-                
+                viewDataTable();
                 JOptionPane.showMessageDialog(this, "Data pegawai berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
             }catch(SQLException e){
                 JOptionPane.showMessageDialog(this, "Data akun gagal dimasukkan karena "+e.getMessage()+".", "Gagal", JOptionPane.ERROR_MESSAGE);

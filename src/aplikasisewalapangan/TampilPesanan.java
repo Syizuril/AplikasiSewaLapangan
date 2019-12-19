@@ -5,6 +5,7 @@
  */
 package aplikasisewalapangan;
 
+import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
@@ -14,28 +15,33 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
 public class TampilPesanan extends javax.swing.JFrame {
+    Koneksi DB = new Koneksi();
+    Connection con;
+    Statement st;
+    ResultSet rs;
+    private String sql=null;
     private int statusLogin=0;
-    private InputAkun akun;
-    private InputPesan pesan;
-    private int index=0;
+//    private InputAkun akun;
+//    private InputPesan pesan;
+    private String id_account;
     InputPesanan ip;
     
     /**
      * Creates new form DashboardAdmin
      */
     public TampilPesanan() {
-        akun = new InputAkun();
+//        akun = new InputAkun();
         initComponents();
         clear();
     }
         
-    public TampilPesanan(int status, ArrayList<Akun> akun, ArrayList<Pesanan> pesan,int index){
-        this.akun = new InputAkun();
-        this.akun.setListAkun(akun);
-        this.pesan = new InputPesan();
-        this.pesan.setListPesanan(pesan);
+    public TampilPesanan(int status, String id_account){
+//        this.akun = new InputAkun();
+//        this.akun.setListAkun(akun);
+//        this.pesan = new InputPesan();
+//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
-        this.index = index;
+        this.id_account = id_account;
         initData();
     }
     
@@ -48,7 +54,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         initComponents();
         clear();
         try{
-            haiLabel.setText("Hallo, "+akun.get(index).getUsername());
+            haiLabel.setText("Hallo, "+DB.getUsername(id_account));
         }catch(IndexOutOfBoundsException e){
             haiLabel.setText("Hallo");
         }
@@ -80,6 +86,8 @@ public class TampilPesanan extends javax.swing.JFrame {
         hapusBT = new javax.swing.JButton();
         editBT = new javax.swing.JButton();
         signOutLabel = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -274,6 +282,31 @@ public class TampilPesanan extends javax.swing.JFrame {
             }
         });
 
+        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 102, 153));
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("Kelola Member");
+        jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel8MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -294,9 +327,11 @@ public class TampilPesanan extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(37, 37, 37)
+                        .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
         );
@@ -316,7 +351,8 @@ public class TampilPesanan extends javax.swing.JFrame {
                     .addComponent(eFootsallLabel)
                     .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
@@ -354,7 +390,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
+                ip = new InputPesanan(statusLogin,id_account);
                 ip.setVisible(true);
             }
         });
@@ -365,7 +401,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(statusLogin,akun.getAll(),pesan.getAll(),index);
+                    DashboardAdmin da = new DashboardAdmin(statusLogin,id_account);
                     da.setVisible(true);
                 }
             });
@@ -373,10 +409,21 @@ public class TampilPesanan extends javax.swing.JFrame {
 
     private void hapusBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBTActionPerformed
         if(pesanTable.getSelectedRow()>=0){
+            int column = 0;
+            int row = pesanTable.getSelectedRow();
+            String id = pesanTable.getModel().getValueAt(row, column).toString();
             int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
             if(reply==JOptionPane.YES_OPTION){
-                pesan.deleteData(pesanTable.getSelectedRow());
-                ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
+                try{
+                    con = null;
+                    con = DB.config();
+                    sql = "delete from tb_pesan where id_pesan='"+id+"'";
+                    st = con.createStatement();
+                    st.execute(sql);
+                }catch(SQLException e){
+                    System.err.println("Error : "+e.getMessage());
+                }
+                ip = new InputPesanan(statusLogin,id_account);
                 pesanTable.setModel(ip.modelPesanan);
                 ip.viewDataTable();
             }else{
@@ -393,7 +440,9 @@ public class TampilPesanan extends javax.swing.JFrame {
             this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index, pesanTable.getSelectedRow());
+                        int column = 0;
+                        int row = pesanTable.getSelectedRow();
+                        ip = new InputPesanan(statusLogin,id_account,pesanTable.getModel().getValueAt(row, column).toString());
                         ip.setVisible(true);
                     }
                 });
@@ -406,7 +455,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        Login ln = new Login(akun.getAll(),pesan.getAll(),index);
+                        Login ln = new Login();
                         ln.setVisible(true);
                     }
                 });
@@ -416,7 +465,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputPetugas ip = new InputPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
+                InputPetugas ip = new InputPetugas(statusLogin,id_account);
                 ip.setVisible(true);
             }
         });
@@ -430,6 +479,10 @@ public class TampilPesanan extends javax.swing.JFrame {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             }
     }//GEN-LAST:event_formWindowClosing
+
+    private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel8MouseClicked
 
     /**
      * @param args the command line arguments
@@ -484,11 +537,13 @@ public class TampilPesanan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTable pesanTable;
     private javax.swing.JLabel signOutLabel;
