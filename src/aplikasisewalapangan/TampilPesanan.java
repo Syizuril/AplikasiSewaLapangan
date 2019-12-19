@@ -21,8 +21,6 @@ public class TampilPesanan extends javax.swing.JFrame {
     ResultSet rs;
     private String sql=null;
     private int statusLogin=0;
-//    private InputAkun akun;
-//    private InputPesan pesan;
     private String id_account;
     InputPesanan ip;
     
@@ -30,16 +28,11 @@ public class TampilPesanan extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public TampilPesanan() {
-//        akun = new InputAkun();
         initComponents();
         clear();
     }
         
     public TampilPesanan(int status, String id_account){
-//        this.akun = new InputAkun();
-//        this.akun.setListAkun(akun);
-//        this.pesan = new InputPesan();
-//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();

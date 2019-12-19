@@ -21,8 +21,6 @@ import javax.swing.table.DefaultTableModel;
 public class InputPesanan extends javax.swing.JFrame {
     private int statusLogin=0;
     DefaultTableModel modelPesanan;
-//    InputPesan inputPesan;
-//    InputAkun inputAkun;
     Koneksi DB = new Koneksi();
     Connection con;
     Statement st;
@@ -39,8 +37,6 @@ public class InputPesanan extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public InputPesanan() {
-//        inputPesan = new InputPesan();
-//        inputAkun = new InputAkun();
         initComponents();
         this.setTitle("Input Data Pesanan - Admin");
         this.setLocationRelativeTo(null);
@@ -49,10 +45,6 @@ public class InputPesanan extends javax.swing.JFrame {
     }
     
     public InputPesanan(int status, String id_account){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pn);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();
@@ -76,10 +68,6 @@ public class InputPesanan extends javax.swing.JFrame {
     }
     
     public InputPesanan(int status, String id_account, String id_temp){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pn);
         this.statusLogin = status;
         this.id_account = id_account;
         this.id_temp = id_temp;
@@ -209,27 +197,6 @@ public class InputPesanan extends javax.swing.JFrame {
         }catch(SQLException e){
             JOptionPane.showMessageDialog(this, "Error :"+e);
         }
-//        Object[][]objectPesan = new Object[inputPesan.getAll().size()][10];
-//        int i = 0;
-//        for(Pesanan pn: inputPesan.getAll()){
-//            String arrayPesanan[]={
-//                pn.getKodeBooking(),
-//                String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pn.getTglBooking())),
-//                String.valueOf(pn.getWaktuAwal()),
-//                String.valueOf(pn.getWaktuAkhir()),
-//                pn.getNamaTim(),
-//                pn.getNoHP(),
-//                String.valueOf(pn.getHargaBooking()),
-//                String.valueOf(pn.getBayarBooking()),
-//                String.valueOf(pn.getSisaBooking()),
-//                pn.getKetBooking()
-//            };
-//            objectPesan[i]=arrayPesanan;
-//            i++;
-////        }
-//        modelPesanan = new DefaultTableModel(objectPesan,namakolom);
-//        tp = new TampilPesanan(statusLogin, inputAkun.getAll(),inputPesan.getAll(),index);
-//        tp.pesanTable.setModel(modelPesanan);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -872,15 +839,12 @@ public class InputPesanan extends javax.swing.JFrame {
         }else{
             if(edit==1){
                 try{
-                    con = null;
-                    con = DB.config();
                     sql ="delete from tb_pesan where id_pesan='"+id_temp+"'";
                     st = con.createStatement();
                     st.execute(sql);
                 }catch(SQLException e){
                     JOptionPane.showMessageDialog(this,"Error : "+e.getMessage());
                 }
-//                inputPesan.deleteData(selectedRow);
             }
             waktuAwal = waktuAwalCB.getSelectedItem().toString();
             String[] partAwal = waktuAwal.split("\\.");
@@ -923,26 +887,6 @@ public class InputPesanan extends javax.swing.JFrame {
             }catch(SQLException e){
                 JOptionPane.showMessageDialog(this, "Data member gagal dimasukkan karena "+e.getMessage()+".", "Gagal", JOptionPane.ERROR_MESSAGE);
             }
-             
-//            inputPesan.InsertData( 
-//                    kodeBookingTF.getText(),
-//                    namaTimTF.getText(),
-//                    noTelpTF.getText(), 
-//                    keteranganTF.getText(), 
-//                    inputAkun.get(index).getKdAkun(), 
-//                    inputAkun.get(index).getUsername(),
-//                    Integer.parseInt(partWaktuAwal),
-//                    Integer.parseInt(partWaktuAkhir),
-//                    Integer.parseInt(durasiTF.getText()), 
-//                    Integer.parseInt(hargaTF.getText()),
-//                    Integer.parseInt(tagihanTF.getText()), 
-//                    Integer.parseInt(sisaTF.getText()), 
-//                    tglBookingDate.getDate(),
-//                    index
-//            );
-//            hapus();
-//            JOptionPane.showMessageDialog(this, "Data pesanan berhasil Anda masukkan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
-//            viewDataTable();        
         }
     }//GEN-LAST:event_saveBTActionPerformed
 

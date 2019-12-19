@@ -21,8 +21,6 @@ public class TampilMember extends javax.swing.JFrame {
     ResultSet rs;
     private String sql=null;
     private int statusLogin=0;
-//    private InputAkun akun;
-//    private InputPesan pesan;
     private String id_account=null;
     InputMember im;
     
@@ -30,17 +28,11 @@ public class TampilMember extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public TampilMember() {
-//        akun = new InputAkun();
-//        pesan = new InputPesan();
         initComponents();
         clear();
     }
         
     public TampilMember(int status, String id_account){
-//        this.akun = new InputAkun();
-//        this.akun.setListAkun(akun);
-//        this.pesan = new InputPesan();
-//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();

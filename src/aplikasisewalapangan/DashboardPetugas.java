@@ -21,16 +21,12 @@ public class DashboardPetugas extends javax.swing.JFrame {
     Statement st;
     ResultSet rs;
     private int statusLogin=0;
-//    private InputAkun akun;
-//    private InputPesan pesan;`
     private String id_account=null;
     
     /**
      * Creates new form DashboardAdmin
      */
     public DashboardPetugas() {
-//        akun = new InputAkun();
-//        pesan = new InputPesan();
         initComponents();
         DB.config();
         con = DB.con;
@@ -38,10 +34,6 @@ public class DashboardPetugas extends javax.swing.JFrame {
     }
     
     public DashboardPetugas(int status, String id_account){
-//        this.akun = new InputAkun();
-//        this.akun.setListAkun(akun);
-//        this.pesan = new InputPesan();
-//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();
@@ -58,12 +50,6 @@ public class DashboardPetugas extends javax.swing.JFrame {
         haiLabel.setText("Hallo, "+DB.getUsername(id_account));
         jmlhPelanggan.setText("0");
         java.util.Date date=new java.util.Date();
-//        int jam = 0;
-//        for(int i=0;i<pesan.getSize(); i++){
-//                if(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(pesan.get(i).getTglBooking())).equals(String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(date)))){
-//                    jam = jam+(pesan.get(i).getLamaWaktu());
-//                }
-//            }
         jmlhPesanan.setText("0");
     }
     /**
@@ -382,8 +368,8 @@ public class DashboardPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-//                    InputPesananPetugas ip = new InputPesananPetugas(statusLogin,akun.getAll(),pesan.getAll(),index);
-//                    ip.setVisible(true);
+                    InputPesananPetugas ip = new InputPesananPetugas(statusLogin,id_account);
+                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked

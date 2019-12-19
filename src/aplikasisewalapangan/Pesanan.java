@@ -11,28 +11,11 @@ import java.util.Date;
  *
  * @author Syekh Syihabuddin AU (171023), Leomongga Oktaria Sihombing (171123), Ryandi Johannsah P (171191)
  */
-public class Pesanan extends Akun{
+public class Pesanan{
     private String kodeBooking, namaTim, noHP, ketBooking;
     private int waktuAwal, waktuAkhir, lamaWaktu, hargaBooking, bayarBooking, sisaBooking;
     private Date tglBooking;
     private int index;
-
-    public Pesanan(String kodeBooking, String namaTim, String noHP, String ketBooking, String kodePegawai, String namaPegawai, int waktuAwal, int waktuAkhir, int lamaWaktu, int hargaBooking, int bayarBooking, int sisaBooking, Date tglBooking, int index) {
-        super(kodePegawai, namaPegawai);
-        this.kodeBooking = kodeBooking;
-        this.namaTim = namaTim;
-        this.noHP = noHP;
-        this.ketBooking = ketBooking;
-        this.waktuAwal = waktuAwal;
-        this.waktuAkhir = waktuAkhir;
-        this.lamaWaktu = lamaWaktu;
-        this.hargaBooking = hargaBooking;
-        this.bayarBooking = bayarBooking;
-        this.sisaBooking = sisaBooking;
-        this.tglBooking = tglBooking;
-        this.index = index;
-    }
-    
     
     public Pesanan(String waktuAwal, String waktuAkhir){
         switch(waktuAwal){

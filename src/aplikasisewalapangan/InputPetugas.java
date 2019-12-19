@@ -25,8 +25,6 @@ public class InputPetugas extends javax.swing.JFrame {
     private int statusLogin=0;
     private String id_account=null;
     DefaultTableModel modelPegawai;
-//    InputAkun inputAkun;
-//    InputPesan inputPesan;
     TampilPetugas tp;
     private String id_temp=null;
     private int edit=0;
@@ -34,8 +32,6 @@ public class InputPetugas extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public InputPetugas() {
-//        inputAkun = new InputAkun();
-//        inputPesan = new InputPesan();
         initComponents();
         DB.config();
         con = DB.con;
@@ -46,10 +42,6 @@ public class InputPetugas extends javax.swing.JFrame {
     }
     
     public InputPetugas(int status, String id_account){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();
@@ -71,10 +63,6 @@ public class InputPetugas extends javax.swing.JFrame {
     }
     
     public InputPetugas(int status, String id_account, String id_temp){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         this.id_temp = id_temp;
@@ -173,21 +161,6 @@ public class InputPetugas extends javax.swing.JFrame {
         } catch(SQLException e){
           JOptionPane.showMessageDialog(this, "Error :"+e);
         }
-//        Object[][]objectPegawai = new Object[inputAkun.getAll().size()][5];
-//        int i = 0;
-//        for(Akun an: inputAkun.getAll()){
-//            if(an.getStatusAkun().equals("1")){
-//                String arrayPegawai[]={
-//                    an.getKdAkun(),
-//                    String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
-//                    an.getUsername(),
-//                    an.getNoTelp(),
-//                    an.getAlamat()
-//                };
-//                objectPegawai[i]=arrayPegawai;
-//            }
-//            i++;
-//        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -603,7 +576,6 @@ public class InputPetugas extends javax.swing.JFrame {
                 } catch(SQLException e){
                   JOptionPane.showMessageDialog(this, "Error :"+e);
                 }
-//                inputAkun.deleteData(selectedRow+1);
             }
             String password=HashingUtils.preparePassword(passwordTF.getText(), kdPegawaiTF.getText());
             int status;

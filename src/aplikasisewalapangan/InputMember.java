@@ -26,8 +26,6 @@ public class InputMember extends javax.swing.JFrame {
     private int statusLogin=0;
     private String id_account=null;
     DefaultTableModel modelMember;
-//    InputAkun inputAkun;
-//    InputPesan inputPesan;
     TampilMember tm;
     private String id_temp=null;
     private int edit=0;
@@ -35,8 +33,6 @@ public class InputMember extends javax.swing.JFrame {
      * Creates new form DashboardAdmin
      */
     public InputMember() {
-//        inputAkun = new InputAkun();
-//        inputPesan = new InputPesan();
         initComponents();
         DB.config();
         con = DB.con;
@@ -47,10 +43,6 @@ public class InputMember extends javax.swing.JFrame {
     }
     
     public InputMember(int status, String id_account){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();
@@ -68,10 +60,6 @@ public class InputMember extends javax.swing.JFrame {
     }
     
     public InputMember(int status, String id_account, String id_temp){
-//        inputAkun = new InputAkun();
-//        inputAkun.setListAkun(akun);
-//        inputPesan = new InputPesan();
-//        inputPesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         this.id_temp = id_temp;
@@ -174,21 +162,6 @@ public class InputMember extends javax.swing.JFrame {
         } catch(SQLException e){
           JOptionPane.showMessageDialog(this, "Error :"+e);
         }
-//        Object[][]objectPegawai = new Object[inputAkun.getAll().size()][5];
-//        int i = 0;
-//        for(Akun an: inputAkun.getAll()){
-//            if(an.getStatusAkun().equals("1")){
-//                String arrayPegawai[]={
-//                    an.getKdAkun(),
-//                    String.valueOf(new SimpleDateFormat("dd-MMM-yyyy").format(an.getDaftar())),
-//                    an.getUsername(),
-//                    an.getNoTelp(),
-//                    an.getAlamat()
-//                };
-//                objectPegawai[i]=arrayPegawai;
-//            }
-//            i++;
-//        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -632,7 +605,6 @@ public class InputMember extends javax.swing.JFrame {
                         } catch(SQLException e){
                           JOptionPane.showMessageDialog(this, "Error :"+e.getMessage());
                         }
-        //                inputAkun.deleteData(selectedRow+1);
                     }
                     java.util.Date utilDate = daftarDate.getDate();
                     java.sql.Date daftarDate = new java.sql.Date(utilDate.getTime());;
@@ -668,7 +640,6 @@ public class InputMember extends javax.swing.JFrame {
                 this.setVisible(false);
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-        //                    TampilPetugas tp = new TampilPetugas(1,id_account);
                         tm.setVisible(true);
                         viewDataTable();
                     }

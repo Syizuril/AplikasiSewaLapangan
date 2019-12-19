@@ -22,40 +22,21 @@ public class Login extends javax.swing.JFrame {
     Connection con;
     Statement st;
     ResultSet rs;
-//    InputAkun dataAkun;
-//    InputPesan dataPesan;
     String sql;
-//    private int count = 0;
     private String id_account;
     private String status = null;
-//    private String username;
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
-//        dataAkun = new InputAkun();
-//        dataPesan = new InputPesan();
         start();
     }
-    
-//    public Login(ArrayList<Akun> akun, ArrayList<Pesanan> pesan, int index){
-//        this.dataAkun = new InputAkun();
-//        this.dataAkun.setListAkun(akun);
-//        this.dataPesan = new InputPesan();
-//        this.dataPesan.setListPesanan(pesan);
-//        this.index = index;
-//        initComponents();
-//        this.setTitle("Login - eFootsall");
-//        this.setResizable(false);
-//        this.setLocationRelativeTo(null);
-//    }
-
+   
     public void start(){
         Koneksi DB = new Koneksi();
         DB.config();
         con = DB.con;
-//        dataAkun.insertData("Admin","admin","AD001","0","082218424650","Karawang",new Date(2017,10,22),0);
         usernameTF.setText(null);
         passwordTF.setText(null);
         usernameTF.requestFocus();
@@ -204,47 +185,6 @@ public class Login extends javax.swing.JFrame {
             }catch(SQLException e){
                 System.err.println("Error: "+e.getMessage());
             }
-//            try{
-//                con = null;
-//                con = DB.config();
-//                sql = "select * from tb_account";
-//                st=con.createStatement();
-//                rs=st.executeQuery(sql);
-//                while(rs.next()){
-//                    String password=HashingUtils.preparePassword(passwordTF.getText(), rs.getString("id_account"));
-//                    if(usernameTF.getText().equals(rs.getString("username"))){
-//                        if(password.equals(rs.getString("password"))){
-//                            flag = 1;
-//                            System.out.println("found the account");
-//                            status = "0";
-//                            java.util.Date dateNow=new java.util.Date();
-//                            java.sql.Date dateNowSQL = new java.sql.Date(dateNow.getTime());
-//                            sql = "update tb_account set last_login='";
-//                            st=con.createStatement();
-//                            rs=st.executeQuery(sql);
-//                        }else{
-//                            flag = 2;
-//                            System.out.println("not found the account");
-//                        }
-//                    }
-//                }
-//            }catch(SQLException e){
-//                System.err.println("Error: "+e.getMessage());
-//            } 
-//            for(int i=0;i<dataAkun.getSize(); i++){
-//                if(Arrays.equals(dataAkun.get(i).getUsername().toCharArray(), usernameTF.getText().toCharArray())){
-//                    System.out.println("found the account");
-//                    if(Arrays.equals(dataAkun.get(i).getPassword().toCharArray(), passwordTF.getPassword())){
-//                        flag = 1;
-//                        index = dataAkun.get(i).getIndex();
-//                        status = dataAkun.get(i).getStatusAkun();
-//                    }else{
-//                        flag = 2;
-//                    }
-//                }else{
-//                    System.out.println("not found the account");
-//                }
-//            }
         }
         if(flag==0){
            JOptionPane.showMessageDialog(this, "Akun tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
