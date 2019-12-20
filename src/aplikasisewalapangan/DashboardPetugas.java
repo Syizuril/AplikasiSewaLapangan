@@ -121,7 +121,7 @@ public class DashboardPetugas extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Dashboard Admin");
+        jLabel1.setText("Dashboard Petugas");
 
         jmlhPelanggan.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jmlhPelanggan.setText("99");

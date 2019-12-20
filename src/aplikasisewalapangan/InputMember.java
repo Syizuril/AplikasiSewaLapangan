@@ -350,6 +350,12 @@ public class InputMember extends javax.swing.JFrame {
         alamatTF.setRows(5);
         jScrollPane1.setViewportView(alamatTF);
 
+        noTelpTF.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                noTelpTFKeyTyped(evt);
+            }
+        });
+
         saveBT.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         saveBT.setForeground(new java.awt.Color(0, 102, 153));
         saveBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save24.png"))); // NOI18N
@@ -715,6 +721,16 @@ public class InputMember extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_jLabel6MouseClicked
 
+    private void noTelpTFKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_noTelpTFKeyTyped
+        char c = evt.getKeyChar();
+        if (!((c >= '0') && (c <= '9') ||
+           (c == KeyEvent.VK_BACK_SPACE) ||
+           (c == KeyEvent.VK_DELETE))) {
+          getToolkit().beep();
+          evt.consume();
+        }
+    }//GEN-LAST:event_noTelpTFKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -762,7 +778,6 @@ public class InputMember extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -777,7 +792,6 @@ public class InputMember extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField kdMemberTF;

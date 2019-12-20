@@ -138,12 +138,11 @@ public class TampilMember extends javax.swing.JFrame {
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        jPanel6.setBackground(new java.awt.Color(0, 102, 153));
         jPanel6.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setForeground(new java.awt.Color(0, 102, 153));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Kelola Petugas");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -277,8 +276,10 @@ public class TampilMember extends javax.swing.JFrame {
             }
         });
 
+        jPanel8.setBackground(new java.awt.Color(0, 102, 153));
+
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(0, 102, 153));
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("Kelola Member");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {

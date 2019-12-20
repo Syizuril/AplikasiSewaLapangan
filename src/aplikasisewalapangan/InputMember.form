@@ -473,6 +473,9 @@
               </SubComponents>
             </Container>
             <Component class="javax.swing.JTextField" name="noTelpTF">
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="noTelpTFKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="saveBT">
               <Properties>

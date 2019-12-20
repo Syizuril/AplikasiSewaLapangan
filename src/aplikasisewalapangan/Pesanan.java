@@ -162,8 +162,12 @@ public class Pesanan{
     }
 
     public String getKetBooking() {
-        if(sisaBooking==0){
-            ketBooking="LUNAS";
+        if(sisaBooking>=0){
+            if(sisaBooking==0){
+                ketBooking="LUNAS";
+            }else{
+                ketBooking="LUNAS, Kembalian sebanyak Rp."+sisaBooking;
+            }
         }else{
             ketBooking="BELUM LUNAS";
         }

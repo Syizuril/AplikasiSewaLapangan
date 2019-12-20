@@ -21,26 +21,18 @@ public class TampilPetugas extends javax.swing.JFrame {
     ResultSet rs;
     private String sql=null;
     private int statusLogin=0;
-//    private InputAkun akun;
-//    private InputPesan pesan;
-    private String id_account=null;
+    String id_account=null;
     InputPetugas ip;
     
     /**
      * Creates new form DashboardAdmin
      */
     public TampilPetugas() {
-//        akun = new InputAkun();
-//        pesan = new InputPesan();
         initComponents();
         clear();
     }
         
     public TampilPetugas(int status, String id_account){
-//        this.akun = new InputAkun();
-//        this.akun.setListAkun(akun);
-//        this.pesan = new InputPesan();
-//        this.pesan.setListPesanan(pesan);
         this.statusLogin = status;
         this.id_account = id_account;
         initData();
@@ -441,7 +433,7 @@ public class TampilPetugas extends javax.swing.JFrame {
                     public void run() {
                         int column = 0;
                         int row = pegawaiTable.getSelectedRow();
-                        ip = new InputPetugas(3, id_account,pegawaiTable.getModel().getValueAt(row, column).toString());
+                        ip = new InputPetugas(statusLogin, id_account,pegawaiTable.getModel().getValueAt(row, column).toString());
                         ip.setVisible(true);
                     }
                 });
@@ -464,8 +456,8 @@ public class TampilPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-//                    InputPesanan ip = new InputPesanan(statusLogin,akun.getAll(),pesan.getAll(),index);
-//                    ip.setVisible(true);
+                    InputPesanan ip = new InputPesanan(statusLogin,id_account);
+                    ip.setVisible(true);
                 }
             });
     }//GEN-LAST:event_jLabel7MouseClicked
