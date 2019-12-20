@@ -36,7 +36,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
         initComponents();
         DB.config();
         con = DB.con;
-        this.setTitle("Input Data Member - Admin");
+        this.setTitle("Input Data Member - Petugas");
         this.setLocationRelativeTo(null);
         kdMemberTF.setText(null);
         kdMemberTF.setEditable(false);
@@ -67,7 +67,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
     }
     
     public void clear(){
-        this.setTitle("Input Data Member - Admin");
+        this.setTitle("Input Data Member - Petugas");
         this.setLocationRelativeTo(null);
         viewDataTable();
     }
@@ -625,7 +625,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    DashboardAdmin da = new DashboardAdmin(1,id_account);
+                    DashboardPetugas da = new DashboardPetugas(1,id_account);
                     da.setVisible(true);
                 }
             });
@@ -645,7 +645,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
         this.setVisible(false);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    InputPesanan ip = new InputPesanan(statusLogin,id_account);
+                    InputPesananPetugas ip = new InputPesananPetugas(statusLogin,id_account);
                     ip.setVisible(true);
                 }
             });

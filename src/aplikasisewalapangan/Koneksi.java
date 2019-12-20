@@ -97,6 +97,24 @@ public class Koneksi {
         return 0;
     }
     
+    public int getLamaJam(String sqlDate){
+        int jam=0;
+        try{
+            con = null;
+            con = config();
+            sql = "select lama_booking from tb_pesan where tgl_booking='"+sqlDate+"'";
+            st=con.createStatement();
+            rs=st.executeQuery(sql);
+            while(rs.next()){
+                jam=jam+rs.getInt("lama_booking");
+            }
+            return jam;
+        }catch(SQLException e){
+            System.err.println("Error: "+e.getMessage());
+        }
+        return 0;
+    }
+    
     public int getJmlPetugas(){
         try{
             con = null;

@@ -141,7 +141,7 @@ public class InputMember extends javax.swing.JFrame {
             con = null;
             con = DB.config();
             clearTabel();
-            sql = " select * from tb_member order by id_member asc";
+            sql = "select * from tb_member order by id_member asc";
             st = con.createStatement();
             rs = st.executeQuery(sql);
             while (rs.next()){
