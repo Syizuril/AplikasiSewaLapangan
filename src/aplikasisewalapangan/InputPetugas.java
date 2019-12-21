@@ -141,7 +141,10 @@ public class InputPetugas extends javax.swing.JFrame {
             }
         };
         try{
-            con = DB.config();
+            if(con==null){
+                con = null;
+                con = DB.config();
+            }
             clearTabel();
             sql = " select * from tb_account order by id_account asc";
             st = con.createStatement();
@@ -605,7 +608,10 @@ public class InputPetugas extends javax.swing.JFrame {
         }else{
             if(edit==1){
                 try{
-                    con = DB.config();
+                    if(con==null){
+                        con = null;
+                        con = DB.config();
+                    }
                     sql = "delete from tb_account where id_account='"+id_temp+"'";
                     st = con.createStatement();
                     st.execute(sql);
@@ -627,8 +633,10 @@ public class InputPetugas extends javax.swing.JFrame {
             java.sql.Date daftarDate = new java.sql.Date(utilDate.getTime());
             java.sql.Date dateNowSQL = new java.sql.Date(dateNow.getTime());
             try{
-                con = null;
-                con = DB.config();
+                if(con==null){
+                    con = null;
+                    con = DB.config();
+                }
                 sql = "insert into tb_account values('"+kdPegawaiTF.getText()+"','"
                     +namaTF.getText()+"','"
                     +password+"','"

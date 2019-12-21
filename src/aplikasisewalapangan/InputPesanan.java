@@ -147,9 +147,10 @@ public class InputPesanan extends javax.swing.JFrame {
     }
     
     public final void viewDataTable(){
-        String[] namakolom={"Kode Booking","Tanggal Booking","Nama Member","Waktu Mulai","Waktu Berakhir","Nama Tim","No. Telp","Harga","Tagihan","Sisa","Keterangan"};
+        String[] namakolom={"Kode Booking","Tanggal Booking","Nama Member","Waktu Mulai","Waktu Berakhir","Lapangan","Nama Tim","No. Telp","Harga","Tagihan","Sisa","Keterangan"};
         modelPesanan = new DefaultTableModel(null, namakolom){
             Class[]types = new Class[]{
+                java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
                 java.lang.String.class,
@@ -172,8 +173,10 @@ public class InputPesanan extends javax.swing.JFrame {
             }
         };
         try{
-            con = null;
-            con = DB.config();
+            if(con==null){
+                con = null;
+                con = DB.config();
+            }
             clearTabel();
             sql = "select * from tb_pesan order by id_pesan asc";
             st = con.createStatement();
@@ -184,6 +187,7 @@ public class InputPesanan extends javax.swing.JFrame {
                 String nama_member = DB.getNameMember(rs.getString("id_member"));
                 String waktu_awal = rs.getString("waktu_awal");
                 String waktu_akhir = rs.getString("waktu_akhir");
+                String lapangan = rs.getString("lapangan");
                 String nama_tim = rs.getString("nama_tim");
                 String no_telp = rs.getString("no_telp");
                 String harga = rs.getString("harga_booking");
@@ -191,7 +195,7 @@ public class InputPesanan extends javax.swing.JFrame {
                 String sisa = rs.getString("sisa");
                 String keterangan = rs.getString("ket");
                 
-                Object[]data = {id_pesan, tgl_booking, nama_member, waktu_awal, waktu_akhir, nama_tim, no_telp, harga, tagihan, sisa, keterangan};
+                Object[]data = {id_pesan, tgl_booking, nama_member, waktu_awal, waktu_akhir, lapangan, nama_tim, no_telp, harga, tagihan, sisa, keterangan};
                 modelPesanan.addRow(data);
                 tp = new TampilPesanan(statusLogin, this.id_account);
                 tp.pesanTable.setModel(modelPesanan);
@@ -928,8 +932,10 @@ public class InputPesanan extends javax.swing.JFrame {
             java.util.Date utilDate = tglBookingDate.getDate();
             java.sql.Date bookingDate = new java.sql.Date(utilDate.getTime());
             try{
+                if(con==null){
                 con = null;
                 con = DB.config();
+                 }
                 sql = "insert into tb_pesan values('"+kodeBookingTF.getText()+"','"
                         +id_member+"','"
                         +bookingDate+"','"
@@ -955,13 +961,22 @@ public class InputPesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_saveBTActionPerformed
 
     private void seeBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seeBTActionPerformed
-        this.setVisible(false);
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    tp.setVisible(true);
-                    viewDataTable();
-                }
-            });
+        rs=DB.selectAllPesanan();
+        try{
+            if(rs.next()){
+                this.setVisible(false);
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        tp.setVisible(true);
+                        viewDataTable();
+                    }
+                });
+            }else{
+                JOptionPane.showMessageDialog(this, "Tidak ada data dalam database", "Kosong", JOptionPane.WARNING_MESSAGE);
+            }
+        }catch(SQLException e){
+            System.err.println("Error : "+e.getMessage());
+        }
     }//GEN-LAST:event_seeBTActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked

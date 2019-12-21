@@ -173,8 +173,10 @@ public class InputPesananPetugas extends javax.swing.JFrame {
             }
         };
         try{
-            con = null;
-            con = DB.config();
+            if(con==null){
+                con = null;
+                con = DB.config();
+            }
             clearTabel();
             sql = "select * from tb_pesan order by id_pesan asc";
             st = con.createStatement();
@@ -852,8 +854,10 @@ public class InputPesananPetugas extends javax.swing.JFrame {
             java.util.Date utilDate = tglBookingDate.getDate();
             java.sql.Date bookingDate = new java.sql.Date(utilDate.getTime());;
             try{
-                con = null;
-                con = DB.config();
+                if(con==null){
+                    con = null;
+                    con = DB.config();
+                }
                 sql = "insert into tb_pesan values('"+kodeBookingTF.getText()+"','"
                         +id_member+"','"
                         +bookingDate+"','"

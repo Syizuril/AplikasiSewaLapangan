@@ -138,8 +138,10 @@ public class InputMember extends javax.swing.JFrame {
             }
         };
         try{
-            con = null;
-            con = DB.config();
+            if(con==null){
+                con = null;
+                con = DB.config();
+            }
             clearTabel();
             sql = "select * from tb_member order by id_member asc";
             st = con.createStatement();

@@ -41,8 +41,10 @@ public class Koneksi {
     
     public ResultSet selectAllAccount(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select * from tb_account";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -55,8 +57,10 @@ public class Koneksi {
     
     public ResultSet selectAllMember(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select * from tb_member";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -69,8 +73,10 @@ public class Koneksi {
     
     public ResultSet selectAllPesanan(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select * from tb_pesan";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -83,8 +89,10 @@ public class Koneksi {
     
     public int getJmlAdmin(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select count(id_account) from tb_account where status_account='0'";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -100,8 +108,10 @@ public class Koneksi {
     public int getLamaJam(String sqlDate){
         int jam=0;
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select lama_booking from tb_pesan where tgl_booking='"+sqlDate+"'";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -117,8 +127,10 @@ public class Koneksi {
     
     public int getJmlPetugas(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select count(id_account) from tb_account where status_account='1'";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -133,8 +145,10 @@ public class Koneksi {
     
     public int getJmlMember(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select count(id_member) from tb_member";
             st=con.createStatement();
             rs=st.executeQuery(sql);
@@ -149,8 +163,10 @@ public class Koneksi {
     
     public int getJmlPesanan(){
         try{
-            con = null;
-            con = config();
+            if(con==null){
+                con = null;
+                con = config();
+            }
             sql = "select count(id_pesan) from tb_pesan";
             st=con.createStatement();
             rs=st.executeQuery(sql);

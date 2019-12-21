@@ -2,4 +2,4 @@
 
 Kelas 5A - PBD
 
-Perhatian, aplikasi ini membutuhkan library jCalendar yang sudah disediakan pada folder library/jCalendar.
+Perhatian, aplikasi ini membutuhkan beberapa library, silahkan import terlebih dahulu.

@@ -16,6 +16,7 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  */
 public class TampilPesanan extends javax.swing.JFrame {
     Koneksi DB = new Koneksi();
+    Model model = new Model();
     Connection con;
     Statement st;
     ResultSet rs;
@@ -81,6 +82,7 @@ public class TampilPesanan extends javax.swing.JFrame {
         signOutLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        hapusBT1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -300,11 +302,21 @@ public class TampilPesanan extends javax.swing.JFrame {
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
+        hapusBT1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        hapusBT1.setForeground(new java.awt.Color(0, 102, 153));
+        hapusBT1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
+        hapusBT1.setText(" PRINT");
+        hapusBT1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBT1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -327,6 +339,10 @@ public class TampilPesanan extends javax.swing.JFrame {
                         .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hapusBT1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,7 +364,9 @@ public class TampilPesanan extends javax.swing.JFrame {
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
+                .addComponent(hapusBT1)
+                .addGap(11, 11, 11))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -408,8 +426,10 @@ public class TampilPesanan extends javax.swing.JFrame {
             int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
             if(reply==JOptionPane.YES_OPTION){
                 try{
-                    con = null;
-                    con = DB.config();
+                    if(con==null){
+                        con = null;
+                        con = DB.config();
+                    };
                     sql = "delete from tb_pesan where id_pesan='"+id+"'";
                     st = con.createStatement();
                     st.execute(sql);
@@ -477,6 +497,19 @@ public class TampilPesanan extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel8MouseClicked
 
+    private void hapusBT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBT1ActionPerformed
+        int jmlPesanan = DB.getJmlPesanan();
+            if(jmlPesanan==0){
+                JOptionPane.showMessageDialog(this, "Tidak ada dalam data Pesanan, Silahkan isi data terlebih dahulu !", "Gagal !", JOptionPane.ERROR_MESSAGE);
+            }else{
+                try{
+                    model.viewReportShowForm("Laporan Data Pesanan", "SELECT * FROM tb_pesan", "./src/aplikasisewalapangan/DataPesanan.jrxml");
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(rootPane, e);
+                }
+        }
+    }//GEN-LAST:event_hapusBT1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -525,6 +558,7 @@ public class TampilPesanan extends javax.swing.JFrame {
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
     private javax.swing.JButton hapusBT;
+    private javax.swing.JButton hapusBT1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

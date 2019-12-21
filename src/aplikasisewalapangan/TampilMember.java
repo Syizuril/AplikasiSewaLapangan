@@ -16,6 +16,7 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  */
 public class TampilMember extends javax.swing.JFrame {
     Koneksi DB = new Koneksi();
+    Model model = new Model();
     Connection con;
     Statement st;
     ResultSet rs;
@@ -77,6 +78,7 @@ public class TampilMember extends javax.swing.JFrame {
         signOutLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        hapusBT1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -302,6 +304,16 @@ public class TampilMember extends javax.swing.JFrame {
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
+        hapusBT1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        hapusBT1.setForeground(new java.awt.Color(0, 102, 153));
+        hapusBT1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
+        hapusBT1.setText(" PRINT");
+        hapusBT1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusBT1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -329,10 +341,14 @@ public class TampilMember extends javax.swing.JFrame {
                         .addComponent(eFootsallLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hapusBT1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(63, 63, 63))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
@@ -350,7 +366,9 @@ public class TampilMember extends javax.swing.JFrame {
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hapusBT1)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -361,9 +379,7 @@ public class TampilMember extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -410,8 +426,10 @@ public class TampilMember extends javax.swing.JFrame {
             int reply = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus data ini ?","Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION);
             if(reply==JOptionPane.YES_OPTION){
                 try{
-                    con = null;
-                    con = DB.config();
+                    if(con==null){
+                        con = null;
+                        con = DB.config();
+                    }
                     sql = "delete from tb_member where id_member='"+id+"'";
                     st = con.createStatement();
                     st.execute(sql);
@@ -495,6 +513,19 @@ public class TampilMember extends javax.swing.JFrame {
             });
     }//GEN-LAST:event_jLabel8MouseClicked
 
+    private void hapusBT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBT1ActionPerformed
+        int jmlMember = DB.getJmlMember();
+            if(jmlMember==0){
+                JOptionPane.showMessageDialog(this, "Tidak ada dalam data Member, Silahkan isi data terlebih dahulu !", "Gagal !", JOptionPane.ERROR_MESSAGE);
+            }else{
+                try{
+                    model.viewReportShowForm("Laporan Data Member", "SELECT * FROM tb_member", "./src/aplikasisewalapangan/DataMember.jrxml");
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(rootPane, e);
+                }
+        }
+    }//GEN-LAST:event_hapusBT1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -543,6 +574,7 @@ public class TampilMember extends javax.swing.JFrame {
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
     private javax.swing.JButton hapusBT;
+    private javax.swing.JButton hapusBT1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
