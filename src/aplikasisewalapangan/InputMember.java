@@ -223,7 +223,7 @@ public class InputMember extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Input Pegawai Baru");
+        jLabel1.setText("Input Member Baru");
 
         haiLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         haiLabel.setForeground(new java.awt.Color(255, 255, 255));

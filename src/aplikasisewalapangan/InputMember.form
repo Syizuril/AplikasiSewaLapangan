@@ -118,7 +118,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Input Pegawai Baru"/>
+            <Property name="text" type="java.lang.String" value="Input Member Baru"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="haiLabel">
