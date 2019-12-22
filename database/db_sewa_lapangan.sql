@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 19 Des 2019 pada 13.27
+-- Generation Time: 22 Des 2019 pada 06.34
 -- Versi Server: 10.1.28-MariaDB
 -- PHP Version: 7.1.10
 
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `tb_account` (
   `id_account` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` text NOT NULL,
   `create_date` date NOT NULL,
   `no_telp` varchar(255) NOT NULL,
   `alamat` text NOT NULL,
@@ -44,8 +44,10 @@ CREATE TABLE `tb_account` (
 --
 
 INSERT INTO `tb_account` (`id_account`, `username`, `password`, `create_date`, `no_telp`, `alamat`, `status_account`, `last_login`) VALUES
-('AD001', 'Admin', '7873007e525c87b6848d28d6dadd047c54e239a9fe4df2aa763d3d925958239de414e88ce2dc7f18f72655a39afa49a3d0487e136ab6d706e2cafc1b3ef1fc0b', '2019-12-18', '-', '-', 0, '2019-12-19'),
-('AD003', 'Admin3', '42f19221434c05f7aa6d01b1346a034787c1c23927e5d64e65bc1236c145a1dcfaf7be7fd33b8db62ce34bda534126b6f73ff022dfafde9f083c5461e6027522', '2019-12-19', '123', 'd', 0, '2019-12-19');
+('AD001', 'Admin', '7873007e525c87b6848d28d6dadd047c54e239a9fe4df2aa763d3d925958239de414e88ce2dc7f18f72655a39afa49a3d0487e136ab6d706e2cafc1b3ef1fc0b', '2019-12-18', '-', '-', 0, '2019-12-21'),
+('AD002', 'yan', '85d198cbd36c70d8859a494c4080a90ae9ad1ae877bc7cd99a65fd8cc72c1a7dd7dfd8f8d7df37b92ae633f69de80a3666a00f5567db31532ade700323d7fb8f', '2019-12-20', '088888', 'krw', 0, '2019-12-20'),
+('AD003', 'Syihab', '418b5a9afd761e752a75c7ecf64ea3b9f029383a870a27525acb84a33e9a527a0cef5820c33559763f9e9a396462f273581f30a304365fc4d6d1415484bdfb3a', '2019-12-21', '12345', 'Karawang', 0, '2019-12-21'),
+('PG001', 'Leo Mau Engga ?', '999222e4683af2e168b0fbf491d962ffbbcd5ac03634b6166d96de2b6c57ca71efca30a672a49ac0bcf96437b1dce834c6d7cf76dbdc86300a2d413009e40711', '2019-12-21', '1234567', 'Karawang', 1, '2019-12-21');
 
 -- --------------------------------------------------------
 
@@ -69,7 +71,7 @@ CREATE TABLE `tb_member` (
 --
 
 INSERT INTO `tb_member` (`id_member`, `nama`, `no_ktp`, `nama_tim`, `no_telp`, `alamat`, `create_date`, `last_trancsaction`) VALUES
-('MB001', 'Syam', '1234567890123456', 'Dicopy', 'Syam', '12', '2019-12-19', '2019-12-19');
+('MB001', 'Ryandi', '1234567890123456', 'PBD', '123', 'Karawang', '2019-12-21', '2019-12-21');
 
 -- --------------------------------------------------------
 
@@ -83,6 +85,7 @@ CREATE TABLE `tb_pesan` (
   `tgl_booking` date NOT NULL,
   `waktu_awal` int(4) NOT NULL,
   `waktu_akhir` int(4) NOT NULL,
+  `lapangan` int(11) NOT NULL,
   `lama_booking` int(4) NOT NULL,
   `nama_tim` varchar(255) NOT NULL,
   `no_telp` varchar(255) NOT NULL,
@@ -96,10 +99,8 @@ CREATE TABLE `tb_pesan` (
 -- Dumping data untuk tabel `tb_pesan`
 --
 
-INSERT INTO `tb_pesan` (`id_pesan`, `id_member`, `tgl_booking`, `waktu_awal`, `waktu_akhir`, `lama_booking`, `nama_tim`, `no_telp`, `harga_booking`, `tagihan`, `sisa`, `ket`) VALUES
-('BF001', 'Ketikkan id atau nama member', '2019-12-19', 7, 9, 2, 'Dicopy', 'Syam', 140000, 20000, 120000, 'BELUM LUNAS'),
-('BF002', 'Ketikkan id atau nama member', '2019-12-19', 7, 10, 3, 'Dicopy', 'Syam', 210000, 30000, 180000, 'BELUM LUNAS'),
-('BF003', 'null', '2019-12-19', 7, 9, 2, 'Syam', '1', 126000, 5000000, 0, 'LUNAS');
+INSERT INTO `tb_pesan` (`id_pesan`, `id_member`, `tgl_booking`, `waktu_awal`, `waktu_akhir`, `lapangan`, `lama_booking`, `nama_tim`, `no_telp`, `harga_booking`, `tagihan`, `sisa`, `ket`) VALUES
+('BF001', 'MB001', '2019-12-21', 7, 10, 3, 3, 'PBD', '123', 189000, 200000, 11000, 'LUNAS, Kembalian sebanyak Rp.11000');
 
 --
 -- Indexes for dumped tables
