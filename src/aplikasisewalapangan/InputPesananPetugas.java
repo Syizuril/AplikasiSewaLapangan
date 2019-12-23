@@ -29,7 +29,7 @@ public class InputPesananPetugas extends javax.swing.JFrame {
     Statement st;
     ResultSet rs;
     
-    TampilPesanan tp;
+    TampilPesananPetugas tp;
     private String waktuAwal,waktuAkhir;
     private String id_account;
     private String id_temp=null;
@@ -196,7 +196,7 @@ public class InputPesananPetugas extends javax.swing.JFrame {
                 
                 Object[]data = {id_pesan, tgl_booking, nama_member, waktu_awal, waktu_akhir, nama_tim, no_telp, harga, tagihan, sisa, keterangan};
                 modelPesanan.addRow(data);
-                tp = new TampilPesanan(statusLogin, this.id_account);
+                tp = new TampilPesananPetugas(statusLogin, this.id_account);
                 tp.pesanTable.setModel(modelPesanan);
             }
         }catch(SQLException e){

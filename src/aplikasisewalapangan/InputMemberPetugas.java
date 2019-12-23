@@ -26,7 +26,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
     private int statusLogin=0;
     private String id_account=null;
     DefaultTableModel modelMember;
-    TampilMember tm;
+    TampilMemberPetugas tm;
     private String id_temp=null;
     private int edit=0;
     /**
@@ -157,7 +157,7 @@ public class InputMemberPetugas extends javax.swing.JFrame {
 
                 Object[]data = {id_account, nama, no_ktp, nama_time, no_telp, alamat, create_date, last_trans};
                 modelMember.addRow(data);
-                tm = new TampilMember(statusLogin, this.id_account);
+                tm = new TampilMemberPetugas(statusLogin, this.id_account);
                 tm.memberTable.setModel(modelMember);
               }
         } catch(SQLException e){

@@ -30,7 +30,7 @@ public class TampilPetugas extends javax.swing.JFrame {
      */
     public TampilPetugas() {
         initComponents();
-        clear();
+        tambahan();
     }
         
     public TampilPetugas(int status, String id_account){
@@ -39,14 +39,36 @@ public class TampilPetugas extends javax.swing.JFrame {
         initData();
     }
     
-    public void clear(){
+    public void tambahan(){
         this.setTitle("Tampil Data Petugas - Admin");
         this.setLocationRelativeTo(null);
+        if(con==null){
+            con = DB.config();
+        }
+        try{
+            sql = "select status_account from tb_account where id_account='"+id_account+"'";
+            st =con.createStatement();
+            rs =st.executeQuery(sql);
+            if(rs.next()){
+                int status = rs.getInt("status_account");
+                if(status==0){
+                    printBT.setVisible(true);
+                    adminRB.setVisible(true);
+                    petugasRB.setVisible(true);
+                }else{
+                    printBT.setVisible(false);
+                    adminRB.setVisible(false);
+                    petugasRB.setVisible(false);
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error : "+e.getMessage());
+        }
     }
     
     public void initData(){
         initComponents();
-        clear();
+        tambahan();
         haiLabel.setText("Hallo, "+DB.getUsername(id_account));
     }
     /**
@@ -79,7 +101,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         signOutLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        hapusBT1 = new javax.swing.JButton();
+        printBT = new javax.swing.JButton();
         adminRB = new javax.swing.JRadioButton();
         petugasRB = new javax.swing.JRadioButton();
 
@@ -305,13 +327,13 @@ public class TampilPetugas extends javax.swing.JFrame {
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        hapusBT1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        hapusBT1.setForeground(new java.awt.Color(0, 102, 153));
-        hapusBT1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
-        hapusBT1.setText(" PRINT");
-        hapusBT1.addActionListener(new java.awt.event.ActionListener() {
+        printBT.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        printBT.setForeground(new java.awt.Color(0, 102, 153));
+        printBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
+        printBT.setText(" PRINT");
+        printBT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hapusBT1ActionPerformed(evt);
+                printBTActionPerformed(evt);
             }
         });
 
@@ -359,7 +381,7 @@ public class TampilPetugas extends javax.swing.JFrame {
                         .addGap(9, 9, 9)
                         .addComponent(petugasRB)
                         .addGap(18, 18, 18)
-                        .addComponent(hapusBT1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(printBT, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(11, 11, 11)))
                 .addGap(50, 50, 50))
         );
@@ -385,7 +407,7 @@ public class TampilPetugas extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hapusBT1)
+                    .addComponent(printBT)
                     .addComponent(adminRB)
                     .addComponent(petugasRB))
                 .addGap(11, 11, 11))
@@ -535,7 +557,7 @@ public class TampilPetugas extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_jLabel8MouseClicked
 
-    private void hapusBT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBT1ActionPerformed
+    private void printBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBTActionPerformed
         if((!adminRB.isSelected())&&(!petugasRB.isSelected())){
             JOptionPane.showMessageDialog(this, "Silahkan pilih data admin atau petugas untuk dicetak", "Perhatian", JOptionPane.WARNING_MESSAGE);
         }else if(adminRB.isSelected()){
@@ -561,7 +583,7 @@ public class TampilPetugas extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_hapusBT1ActionPerformed
+    }//GEN-LAST:event_printBTActionPerformed
 
     private void adminRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminRBActionPerformed
         // TODO add your handling code here:
@@ -596,6 +618,18 @@ public class TampilPetugas extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -612,7 +646,6 @@ public class TampilPetugas extends javax.swing.JFrame {
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
     private javax.swing.JButton hapusBT;
-    private javax.swing.JButton hapusBT1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -628,6 +661,7 @@ public class TampilPetugas extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTable pegawaiTable;
     private javax.swing.JRadioButton petugasRB;
+    private javax.swing.JButton printBT;
     private javax.swing.ButtonGroup printPilihan;
     private javax.swing.JLabel signOutLabel;
     // End of variables declaration//GEN-END:variables

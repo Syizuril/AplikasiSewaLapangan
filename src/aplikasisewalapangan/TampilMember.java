@@ -30,7 +30,7 @@ public class TampilMember extends javax.swing.JFrame {
      */
     public TampilMember() {
         initComponents();
-        clear();
+        tambahan();
     }
         
     public TampilMember(int status, String id_account){
@@ -39,14 +39,32 @@ public class TampilMember extends javax.swing.JFrame {
         initData();
     }
     
-    public void clear(){
+    public void tambahan(){
         this.setTitle("Tampil Data Member - Admin");
         this.setLocationRelativeTo(null);
+        if(con==null){
+            con = DB.config();
+        }
+        try{
+            sql = "select status_account from tb_account where id_account='"+id_account+"'";
+            st =con.createStatement();
+            rs =st.executeQuery(sql);
+            if(rs.next()){
+                int status = rs.getInt("status_account");
+                if(status==0){
+                    printBT.setVisible(true);
+                }else{
+                    printBT.setVisible(false);
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error : "+e.getMessage());
+        }
     }
     
     public void initData(){
         initComponents();
-        clear();
+        tambahan();
         haiLabel.setText("Hallo, "+DB.getUsername(id_account));
     }
     /**
@@ -78,7 +96,7 @@ public class TampilMember extends javax.swing.JFrame {
         signOutLabel = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        hapusBT1 = new javax.swing.JButton();
+        printBT = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
@@ -304,13 +322,13 @@ public class TampilMember extends javax.swing.JFrame {
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
-        hapusBT1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        hapusBT1.setForeground(new java.awt.Color(0, 102, 153));
-        hapusBT1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
-        hapusBT1.setText(" PRINT");
-        hapusBT1.addActionListener(new java.awt.event.ActionListener() {
+        printBT.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        printBT.setForeground(new java.awt.Color(0, 102, 153));
+        printBT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/printer (3).png"))); // NOI18N
+        printBT.setText(" PRINT");
+        printBT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hapusBT1ActionPerformed(evt);
+                printBTActionPerformed(evt);
             }
         });
 
@@ -343,7 +361,7 @@ public class TampilMember extends javax.swing.JFrame {
                 .addGap(50, 50, 50))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(hapusBT1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(printBT, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(63, 63, 63))
         );
         jPanel1Layout.setVerticalGroup(
@@ -367,7 +385,7 @@ public class TampilMember extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hapusBT1)
+                .addComponent(printBT)
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -513,7 +531,7 @@ public class TampilMember extends javax.swing.JFrame {
             });
     }//GEN-LAST:event_jLabel8MouseClicked
 
-    private void hapusBT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusBT1ActionPerformed
+    private void printBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printBTActionPerformed
         int jmlMember = DB.getJmlMember();
             if(jmlMember==0){
                 JOptionPane.showMessageDialog(this, "Tidak ada dalam data Member, Silahkan isi data terlebih dahulu !", "Gagal !", JOptionPane.ERROR_MESSAGE);
@@ -524,7 +542,7 @@ public class TampilMember extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(rootPane, e);
                 }
         }
-    }//GEN-LAST:event_hapusBT1ActionPerformed
+    }//GEN-LAST:event_printBTActionPerformed
 
     /**
      * @param args the command line arguments
@@ -574,7 +592,6 @@ public class TampilMember extends javax.swing.JFrame {
     private javax.swing.JLabel haiLabel;
     private javax.swing.JLabel haiLabel1;
     private javax.swing.JButton hapusBT;
-    private javax.swing.JButton hapusBT1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -589,6 +606,7 @@ public class TampilMember extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTable memberTable;
+    private javax.swing.JButton printBT;
     private javax.swing.JLabel signOutLabel;
     // End of variables declaration//GEN-END:variables
 }
